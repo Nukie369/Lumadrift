@@ -15,8 +15,9 @@ frame.addEventListener('load',()=>{
  if(stage===0){
   const p=d.querySelector('#colony-funding-progress');
   if(p.value!==260||p.max!==260||d.querySelector('#colony-count').textContent.trim()!=='0 / 4 BUILT')throw Error('initial funding wrong');
-  const b=[...d.querySelectorAll('#colony-build-list button')].find(x=>!x.disabled&&/BUILD|CONSTRUCT/i.test(x.textContent));
-  if(!b)throw Error('build button not found');
+  d.querySelector('[data-tab=colony]').click();
+  const b=d.getElementById('build-bloom');
+  if(!b || b.disabled)throw Error('build button not found');
   lastEvent='construction button found';
   b.click();
   const s=JSON.parse(localStorage.getItem('luma_drift_save_v2'));

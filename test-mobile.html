@@ -3,7 +3,6 @@
 <script>
 const frame = document.querySelector('iframe');
 const result = document.querySelector('output');
-for (const key of Object.keys(localStorage)) if (key.startsWith("luma_drift_")) localStorage.removeItem(key);
 frame.onload = () => {
   try {
     const doc = frame.contentDocument;
