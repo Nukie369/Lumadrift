@@ -1,7 +1,7 @@
 const fs=require('fs'),vm=require('vm'),assert=require('assert');
 const src=fs.readFileSync(__dirname+'/game.js','utf8');
 const start=src.indexOf('  const FLIGHT_STORAGE=');
-const end=src.indexOf('  let state=readState();',start);
+const end=src.indexOf('  let run=null',start);
 assert(start>0&&end>start);
 const store=new Map();let now=Date.now();
 const localStorage={getItem:k=>store.get(k)||null,setItem:(k,v)=>store.set(k,v),removeItem:k=>store.delete(k)};

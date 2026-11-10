@@ -40,7 +40,6 @@
       return flight.practice===true?'Your practice flight ended when the game closed. No virtual rewards were affected.':'Your expedition ended when the game closed. Unbanked virtual cargo was not awarded. Fuel and completed mission progress remain saved.';
     }catch{return null;}
   }
-  let state=readState();
   let run=null, toastTimeout;
   let mostRecentLandmark=null;
   const upDefs=[
@@ -536,6 +535,8 @@
   function purchaseSkin(skin){if(!state.skins.includes(skin.id)){if(state.credits<skin.cost){notify(`You need ${nf.format(skin.cost-state.credits)} more shards.`);return;}state.credits-=skin.cost;track('skin-unlock',{id:skin.id,cost:skin.cost});state.skins.push(skin.id);}state.skin=skin.id;track('skin-equip',{id:skin.id});save();renderHeader();renderShop();notify(`${skin.name} finish equipped.`);beep(550,.2);}
   function renderShop(){$('upgrade-grid').replaceChildren(...upDefs.map(def=>makeShopCard(def,'upgrade')));$('skin-grid').replaceChildren(...skins.map(def=>makeShopCard(def,'skin')));let skin=skins.find(s=>s.id===state.skin)||skins[0];$('active-skin-name').textContent=skin.name.toUpperCase();['wing','core','light','glass'].forEach((part,i)=>document.documentElement.style.setProperty('--ship-'+part,skin.color[i]));}
   function updateDay(){ensureDay();renderMissionBadge();renderHeader();if($('missions').classList.contains('active'))renderMissions();renderRewards();}
+  // Restore only after the checkpoint keys and validators are initialized.
+  let state=readState();
   for(const btn of document.querySelectorAll('.nav-item'))btn.addEventListener('click',()=>activateTab(btn.dataset.tab));$('launch-btn').addEventListener('click',()=>launch(false));$('practice-btn').addEventListener('click',()=>launch(true));$('bank-btn').addEventListener('click',()=>finish(false,false));$('again-btn').addEventListener('click',()=>{state.end=null;updateScene();launch(false);});$('end-hangar-btn').addEventListener('click',()=>activateTab('hangar'));$('daily-btn').addEventListener('click',claimDaily);$('checkin-btn').addEventListener('click',claimDaily);$('goto-colony').addEventListener('click',()=>activateTab('colony'));$('reward-colony-btn').addEventListener('click',()=>activateTab('colony'));$('sound-btn').addEventListener('click',()=>{state.sound=!state.sound;save();renderHeader();beep(620,.1);});
   $('export-backup-btn')?.addEventListener('click',exportBackup);
   $('import-backup-btn')?.addEventListener('click',()=>$('import-backup-file')?.click());
