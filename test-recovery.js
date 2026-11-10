@@ -1,0 +1,17 @@
+const fs=require('fs'),vm=require('vm'),assert=require('assert');
+const src=fs.readFileSync(__dirname+'/game.js','utf8');
+const start=src.indexOf('  const safeObject='),end=src.indexOf('  function regen(){',start);
+const storage=new Map();const localStorage={getItem:k=>storage.has(k)?storage.get(k):null,setItem:(k,v)=>storage.set(k,v),removeItem:k=>storage.delete(k)};
+const baseState={credits:150,energy:5,energyAt:Date.now(),xp:0,runs:0,wins:0,best:0,total:0,totalJumps:0,damageTaken:0,upgrades:{scanner:0,magnet:0,shield:0},skins:['aurora'],skin:'aurora',dailyClaim:'',dailyStreak:0,dailyProgress:{key:'',launches:0,jumps:0,banked:0,claimed:[]},milestones:[],buildings:[],atlas:{discovered:[],claimed:[],repeats:0},sound:false};
+const ctx={Date,Math,JSON,Array,Set,Number,structuredClone,localStorage,baseState,STORAGE:'luma_drift_save_v2',clamp:(n,a,b)=>Math.max(a,Math.min(b,n)),dateKey:(d=new Date())=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`,toLocalDay:k=>{const [y,m,d]=(k||'').split('-').map(Number);return new Date(y,m-1,d)},notify:()=>{}};
+vm.createContext(ctx);const funcs=vm.runInContext(src.slice(start,end)+'\n({readState,save})',ctx);
+const key=ctx.STORAGE,backup=key+'_backup';
+assert.equal(funcs.readState().credits,150,'new install');
+ctx.state={...baseState,credits:480};funcs.save();assert.equal(funcs.readState().credits,480,'first save');
+ctx.state={...baseState,credits:750};funcs.save();assert.equal(JSON.parse(storage.get(backup)).credits,480,'previous checkpoint retained');
+assert.equal(funcs.readState().credits,750,'latest checkpoint restored');
+storage.set(key,'{invalid');assert.equal(funcs.readState().credits,480,'corrupt primary recovered');assert.equal(JSON.parse(storage.get(key)).credits,480,'primary repaired');
+storage.set(key,JSON.stringify({}));assert.equal(funcs.readState().credits,480,'incomplete primary recovered');
+storage.delete(key);assert.equal(funcs.readState().credits,480,'missing primary recovered');
+storage.set(key,'{broken');storage.set(backup,'{broken');assert.equal(funcs.readState().credits,150,'both invalid fall back safely');
+console.log('PASS: new install, primary restore, backup checkpoint, corrupted/missing primary recovery, primary repair, double-corruption fallback');

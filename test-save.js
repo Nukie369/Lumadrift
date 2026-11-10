@@ -1,0 +1,13 @@
+const fs=require('fs'),vm=require('vm'),assert=require('assert');
+const source=fs.readFileSync(__dirname+'/game.js','utf8');
+const extract=(start,end)=>source.slice(source.indexOf(start),source.indexOf(end,source.indexOf(start)));
+const code=extract('  const safeObject=', '  function save(){');
+const ctx={STORAGE:"luma_drift_save_v2",Date,structuredClone,JSON,Math,Number,Array,Set,console,clamp:(n,a,b)=>Math.max(a,Math.min(b,n)),dateKey:(d=new Date())=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`,toLocalDay:k=>{const [y,m,d]=(k||'').split('-').map(Number);return new Date(y,m-1,d)},baseState:{credits:150,energy:5,energyAt:Date.now(),xp:0,runs:0,wins:0,best:0,total:0,totalJumps:0,damageTaken:0,upgrades:{scanner:0,magnet:0,shield:0},skins:['aurora'],skin:'aurora',dailyClaim:'',dailyStreak:0,dailyProgress:{key:'',launches:0,jumps:0,banked:0,claimed:[]},milestones:[],buildings:[],atlas:{discovered:[],claimed:[],repeats:0},sound:false}};
+vm.createContext(ctx);
+const normalize=vm.runInContext(code+'\nnormalizeState',ctx);
+const fresh=normalize(null);assert.equal(fresh.credits,150);assert.equal(fresh.energy,5);
+const corrupted=normalize({credits:'999999',xp:-42,energy:Infinity,energyAt:Date.now()+1e12,upgrades:{scanner:999,magnet:-1,shield:'2'},dailyClaim:'2026-02-31',dailyProgress:{claimed:['launches','launches','bogus']},buildings:['bloom','bloom','invalid'],atlas:{discovered:['pearl','pearl','fake'],claimed:['deep','bad']},skins:['nebula','bogus'],skin:'bogus'});
+assert.equal(corrupted.credits,0);assert.equal(corrupted.xp,0);assert.equal(corrupted.energy,5);assert.ok(corrupted.energyAt<=Date.now());assert.equal(corrupted.upgrades.scanner,3);assert.equal(corrupted.upgrades.magnet,0);assert.equal(corrupted.upgrades.shield,0);assert.equal(corrupted.dailyClaim,'');assert.deepEqual([...corrupted.buildings],['bloom']);assert.deepEqual([...corrupted.atlas.discovered],['pearl']);assert.deepEqual([...corrupted.dailyProgress.claimed],['launches']);assert.equal(corrupted.skin,'aurora');
+const valid=normalize({credits:450,energy:2,upgrades:{scanner:2},dailyClaim:'2026-11-07',atlas:{discovered:['key']},skin:'aurora'});assert.equal(valid.credits,450);assert.equal(valid.energy,2);assert.equal(valid.upgrades.scanner,2);assert.equal(valid.dailyClaim,'2026-11-07');assert.deepEqual([...valid.atlas.discovered],['key']);
+assert(source.includes('if(!run.practice)state.damageTaken++'));
+console.log('PASS: default, corrupt, valid save normalization and practice damage guard');

@@ -1,0 +1,17 @@
+const fs=require('node:fs'),assert=require('node:assert/strict'),vm=require('node:vm');
+const src=fs.readFileSync('game.js','utf8');
+assert.match(src,/function renderColonyFunding\(\)/);
+assert.match(src,/function renderHeader\(\)\{regen\(\);ensureDay\(\);\$\('credits'\)\.textContent=nf\.format\(state\.credits\);if\(document\.getElementById\('colony-next-milestone'\)\)renderColonyFunding\(\)/);
+assert.match(src,/function renderColony\(\)\{[\s\S]*?renderColonyFunding\(\);/);
+const begin=src.indexOf('  function renderColonyFunding(){'),end=src.indexOf('  function renderColony(){',begin);
+const fn=src.slice(begin,end);
+const elements={};for(const id of ['colony-next-milestone','colony-funding-progress','colony-funding-label'])elements[id]={dataset:{},setAttribute(k,v){this[k]=v},removeAttribute(k){delete this[k]}};
+const state={credits:0,buildings:[]};const defs=[{id:'bloom',name:'Bloom',cost:260,bonus:8}];
+const context={state,buildingDefs:defs,$:id=>elements[id],nf:new Intl.NumberFormat('en-US'),colonyFunding:(credits,cost)=>({saved:Math.min(cost,Math.max(0,credits)),percentage:Math.round(Math.min(cost,Math.max(0,credits))/cost*100),shortfall:Math.max(0,cost-credits)}),colonyBonus:()=>8};
+vm.createContext(context);vm.runInContext(fn+';this.refresh=renderColonyFunding',context);
+context.refresh();assert.equal(elements['colony-funding-progress'].value,0);
+state.credits=130;context.refresh();assert.equal(elements['colony-funding-progress'].value,130);assert.match(elements['colony-funding-label'].textContent,/50%/);
+state.credits=300;context.refresh();assert.equal(elements['colony-funding-progress'].value,260);assert.equal(elements['colony-next-milestone'].dataset.ready,'true');
+state.credits=40;context.refresh();assert.equal(elements['colony-funding-progress'].value,40);assert.equal(elements['colony-next-milestone'].dataset.ready,'false');
+state.buildings.push('bloom');context.refresh();assert.equal(elements['colony-funding-progress'].hidden,true);assert.equal(elements['colony-funding-progress'].value,0);
+console.log('Live colony funding refresh: 5 runtime state transitions passed');

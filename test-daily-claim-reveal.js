@@ -1,0 +1,11 @@
+const fs=require('node:fs'),assert=require('node:assert/strict');
+const html=fs.readFileSync(__dirname+'/index.html','utf8');
+const js=fs.readFileSync(__dirname+'/game.js','utf8');
+const css=fs.readFileSync(__dirname+'/polish.css','utf8');
+for(const id of ['daily-claim-reveal','daily-claim-amount','daily-claim-total'])assert.match(html,new RegExp('id="'+id+'"'));
+assert.match(html,/role="status" aria-live="polite" aria-atomic="true" hidden/);
+assert.match(js,/save\(\);renderHeader\(\);renderRewards\(\);showDailyClaimReveal\(gift\)/);
+assert.match(js,/New balance: \$\{nf\.format\(state\.credits\)\}/);
+assert.match(css,/\.daily-claim-reveal\[hidden\]\{display:none!important\}/);
+assert.match(css,/@media\(prefers-reduced-motion:reduce\)\{\.claim-reveal-enter\{animation:none!important\}\}/);
+console.log('PASS: daily claim reveal wiring, balance, accessible status and reduced motion');

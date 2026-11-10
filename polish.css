@@ -1,0 +1,171 @@
+/* LUMA DRIFT 1.1 — original, bright casual-game art direction */
+:root{--bg:#0d1440;--panel:#222c63;--panel2:#253773;--border:#6976c0;--text:#fffaff;--muted:#c7cee9;--cyan:#73ffde;--orange:#ffd878;--shadow:0 15px 0 #10163e55,0 28px 75px #070a2850;--radius:25px}
+body{background:radial-gradient(ellipse 75% 35% at 55% -4%,#6765cf99,transparent),radial-gradient(ellipse 55% 35% at 8% 58%,#194b9c88,transparent),linear-gradient(180deg,#15266a 0,#111847 50%,#0b133d 100%)}
+.stars{opacity:.28}.brand-symbol{background:linear-gradient(155deg,#ffdf9a,#ffb865 50%,#ec7299);color:white;text-shadow:0 2px 4px #4f295088;border:2px solid #fff0b7;box-shadow:0 5px 0 #a85678,0 12px 20px #0409276b}.brand strong{font-weight:800;text-shadow:0 2px 0 #171a5b}.brand strong i{color:#f8dc8b}.brand small{color:#c0cff8}.topbar{border-bottom-color:#ffffff2a}.pill{background:linear-gradient(180deg,#505d9a,#283c76);border:2px solid #758cd2;box-shadow:inset 0 2px #ffffff2c,0 4px 0 #17255b;padding-inline:14px}.coin-icon{color:#ffda70;text-shadow:0 2px 5px #a05a2d}.nav-item{font-weight:800;color:#b3c6f8}.nav-item:hover{background:#6477c13f}.nav-item.active{background:linear-gradient(180deg,#5b83ef,#4562c5);color:#fff;box-shadow:inset 0 2px #ffffff4d,0 5px 0 #243c80;border:2px solid #94b8ff}.section-eyebrow{color:#9bf9df}.level-chip,.small-pill{background:linear-gradient(180deg,#5d6dc0,#354996);color:white;border:2px solid #8299e6;box-shadow:inset 0 2px #ffffff2d,0 4px 0 #20316c}.heading-row p,.subheading{color:#cad3f7}h1 em{background-image:linear-gradient(110deg,#ffe38d,#ffa1cb,#96fbe5)}
+.game-window,.control-panel{background:linear-gradient(180deg,#334a96,#202c69);border:3px solid #8296d7;box-shadow:0 7px 0 #151d4b,0 20px 55px #070a2866}.game-window{border-radius:27px}.scene{height:415px;background:#3c53a2;isolation:isolate}.scene:before{z-index:2;opacity:.18;animation-duration:28s;pointer-events:none}.world-parallax{position:absolute;inset:-8px;z-index:0;background:url('assets/drift-world.svg') center center/cover no-repeat;animation:worldfloat 8s ease-in-out infinite alternate;transform-origin:center}.scene:after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,#24245e66,transparent 32%,transparent 68%,#28377633),linear-gradient(0deg,#10204d9c,transparent 25%);pointer-events:none;z-index:1}@keyframes worldfloat{0%{transform:scale(1.01) translateX(-4px)}100%{transform:scale(1.055) translateX(4px)}}
+.scene-top{background:linear-gradient(180deg,#445caa,#32468f);border-color:#7892d066;color:#f8f2ff}.scene-bottom{background:#2b3d82;border-color:#7892d066;color:#eff2ff}.planet,.nebula{display:none}.radar-ring{z-index:1;border-color:#fff3da25;width:320px;height:150px;top:57%;left:42%;transform:translate(-50%,-50%) rotate(-7deg)}.radar-ring.r2{width:240px;height:110px}.radar-ring.r3{width:150px;height:67px}.ship-wrap{left:41%;top:48%;width:153px;height:185px;filter:drop-shadow(0 15px 6px #18205777) drop-shadow(0 0 13px #d5f6ff99);z-index:3}.ship-wing{stroke:#fff;stroke-width:4}.ship-core{stroke:#f9fcff;stroke-width:4}.ship-glass{stroke:#fff;stroke-width:3}.engine-flame{filter:blur(6px) drop-shadow(0 2px 15px #effffc)}.scene-hud{z-index:4;text-shadow:0 2px 5px #192258}.scene-hud small{color:#eef5ff}.scene-hud b{color:#ffeaae}.scene-message{z-index:5;color:#3b2558;top:9%;font-size:11px;letter-spacing:1.1px;background:linear-gradient(180deg,#fffbe2,#ffdea7);border:3px solid white;border-bottom-color:#eaa958;box-shadow:0 5px 0 #9d649a,0 12px 22px #2d315666;border-radius:25px;max-width:90%;white-space:normal}.scene-message.impact{color:white;background:linear-gradient(#fb798e,#dd467a);border-color:#ffbed0;box-shadow:0 5px 0 #963b80}.scene-ground{z-index:2}.control-panel{padding:26px}.control-panel h2{font-size:clamp(20px,2vw,26px)}.eyebrow{color:#9dfbdf}.muted{color:#ced6f7}.mini-stat{background:#354785;border:2px solid #6f85cc;box-shadow:inset 0 2px #ffffff24}.mini-stat small,.run-summary small{color:#cad5ff}.primary-btn,.secondary-btn{border-radius:17px;min-height:54px;font-size:13px;letter-spacing:.7px;transition:transform .12s,box-shadow .12s,filter .12s}.primary-btn{background:linear-gradient(180deg,#ffed8c,#ffbd53 70%,#ff9c53);border:3px solid #fff1a0;box-shadow:0 6px 0 #b25b42,0 12px 17px #1118475a;color:#532a50;text-shadow:0 1px #ffffff5c}.primary-btn:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 0 #b25b42,0 13px 17px #1118475a}.primary-btn:active:not(:disabled){transform:translateY(4px);box-shadow:0 2px 0 #b25b42}.secondary-btn{background:linear-gradient(180deg,#70e9cf,#2cbeb4);border:3px solid #b9ffed;color:#114e66;box-shadow:0 5px 0 #14768a}.secondary-btn:hover:not(:disabled){background:linear-gradient(180deg,#a3f9da,#49cfba)}.route{border:2px solid #859fe6;background:linear-gradient(180deg,#4c61ab,#354c8d);box-shadow:0 4px 0 #1b2b63;padding:12px}.route:hover{border-color:#fdf7ad;background:#506cb1}.route-side strong{color:#ffe087}.fair-note,.fineprint{color:#afbddf}.haul{color:white}.haul span:last-child{color:#ffda78}.end-icon{filter:drop-shadow(0 6px #3b336b)}.earned-box{background:linear-gradient(#6a58a8,#35418c);border:2px solid #a8b1fa;box-shadow:inset 0 2px #ffffff44}.bottom-stats>div{border:2px solid #536bc0;background:linear-gradient(180deg,#3d5097,#24346d);box-shadow:0 5px 0 #101c50}.bottom-stats small{color:#c7ceeb}
+.daily-banner{margin:0 0 18px;padding:13px 17px;border-radius:20px;display:flex;align-items:center;gap:14px;background:linear-gradient(105deg,#a74ac1 0%,#7745b0 45%,#485ac3 100%);border:3px solid #e9afff;box-shadow:0 5px 0 #482871,0 12px 30px #0b123e7c}.daily-emblem{font-size:34px;display:grid;place-items:center;flex:0 0 49px;width:49px;height:49px;border-radius:15px;background:linear-gradient(#ffe7a1,#ffb45c);border:2px solid #fff9c0;box-shadow:0 4px 0 #b55c65}.daily-banner-copy{flex:1;min-width:0}.daily-banner-copy strong{display:block;font-size:16px;font-weight:800}.daily-banner-copy small{display:block;font-size:11px;color:#f1dfff;margin-top:3px}.daily-banner button{background:linear-gradient(#effdff,#bfffe9);color:#23606f;border:2px solid white;box-shadow:0 4px 0 #2e8e9d;padding:10px 12px;border-radius:12px;font-weight:900;font-size:11px;white-space:nowrap}.daily-banner.collected{background:linear-gradient(110deg,#346d9e,#3566a4)}.daily-banner button:disabled{opacity:.75}
+.world-teaser{display:flex;gap:12px;align-items:center;background:linear-gradient(110deg,#414b9c,#4e397f);border:2px solid #8e92f0;border-radius:19px;margin-top:18px;padding:14px 18px;box-shadow:0 4px 0 #1d235d}.world-teaser-icon{font-size:35px;background:#ffffff22;border-radius:12px;padding:4px 8px}.world-teaser>div:nth-child(2){flex:1;min-width:0}.world-teaser strong,.world-teaser span{display:block}.world-teaser strong{font-size:14px}.world-teaser span{font-size:11px;color:#cfdaff;margin-top:4px}.world-teaser button{border:2px solid #dcfbe9;background:#54cbb6;border-radius:13px;padding:10px;color:#133d66;font-weight:900;font-size:11px;box-shadow:0 4px 0 #236d7d}
+.shop-card,.mission-card,.reward-card{border:2px solid #6275c5;background:linear-gradient(180deg,#344b91,#24336f);box-shadow:0 5px 0 #151c50}.reward-hero{background:linear-gradient(105deg,#9858ca,#486cc6);border:3px solid #caa6fd;box-shadow:0 6px 0 #4b3a89}.reward-card p,.shop-card p,.mission-card p{color:#d2daf9}.shop-card button,.mission-card button{border:2px solid #98e7e4;background:linear-gradient(180deg,#5ad8d2,#2fa8bc);color:#13445e;box-shadow:0 3px 0 #26647e}.shop-card button.owned{background:#276e73;color:#dbffef}.hangar-feature{border:2px solid #7a89d9;background:linear-gradient(110deg,#4358a4,#30376f);box-shadow:0 5px 0 #1c235c}.hangar-feature p{color:#cbd7f6}.hangar-ship{background:linear-gradient(145deg,#5d68c1,#303977);font-size:75px;border:3px solid #9ecbe9}.info-panel,.disclosure{background:#212e65;border:2px solid #596da9}.info-panel p,.disclosure p{color:#bac8ed}
+/* Persistent, unlockable colony */
+.colony-heading{display:flex;justify-content:space-between;align-items:center;gap:14px}.colony-heading .subheading{max-width:680px}.colony-count{white-space:nowrap;border:2px solid #c0ffe6;background:#327c86;color:#e5fff7;padding:12px 16px;border-radius:16px;font-weight:900;font-size:12px;box-shadow:0 4px 0 #1b526e}.colony-board{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(300px,.75fr);gap:18px}.colony-world{min-height:480px;position:relative;isolation:isolate;overflow:hidden;border:3px solid #a8b2f7;border-radius:28px;background:#5a65ba url('assets/drift-world.svg') 57% 50%/cover no-repeat;box-shadow:0 8px 0 #252a67,0 20px 55px #0006}.colony-world:before{content:'';position:absolute;inset:0;background:linear-gradient(180deg,#2b408e3d,transparent 40%,#18255e70);pointer-events:none}.colony-sky-label{position:absolute;z-index:1;top:18px;left:19px;border:2px solid #fff2c6;background:linear-gradient(#f5e6a5,#ffb56e);box-shadow:0 5px 0 #926290;border-radius:15px;padding:10px 14px;color:#63335d;text-shadow:0 1px #fff8dc;display:flex;flex-direction:column;gap:3px}.colony-sky-label b{font-size:16px;letter-spacing:1.4px}.colony-sky-label small{font-size:9px;letter-spacing:1px;font-weight:900}.colony-world-markers{position:absolute;inset:0;z-index:2}.colony-marker{position:absolute;transform:translate(-50%,-50%);min-width:99px;border:none;background:none;color:white;text-align:center;filter:drop-shadow(0 6px 6px #1016429c)}.colony-marker .marker-icon{display:grid;place-items:center;margin:auto;width:63px;height:63px;border-radius:21px;background:linear-gradient(160deg,#e3f7ff,#7d96d2);border:3px solid #fff;box-shadow:0 5px 0 #404681,0 10px 18px #171e6380;font-size:30px;transition:transform .2s}.colony-marker:hover .marker-icon{transform:translateY(-5px)}.colony-marker.built .marker-icon{background:linear-gradient(155deg,#fff5b0,#ffb677 67%,#ef7ba7);border-color:#fff2b8;box-shadow:0 5px 0 #b16d75,0 0 23px #fff3a499}.colony-marker small{display:inline-block;white-space:nowrap;border-radius:9px;border:1px solid #dbe0ff98;background:#233377e8;padding:5px 7px;margin-top:7px;font-size:10px;font-weight:900;text-shadow:0 1px #11184f}.colony-marker.locked .marker-icon{opacity:.8}.colony-scene-label{position:absolute;bottom:15px;left:50%;transform:translateX(-50%);background:#292e6ed9;border:1px solid #f1e5d69c;border-radius:12px;padding:10px 15px;z-index:1;font-size:10px;letter-spacing:1.3px;font-weight:900;white-space:nowrap;color:#fff3cb}.colony-workshop{border:3px solid #8d9fe8;border-radius:25px;padding:22px;background:linear-gradient(180deg,#394b98,#212e71);box-shadow:0 7px 0 #1c2556}.colony-workshop .eyebrow{margin:0 0 12px}.colony-workshop h2{font-size:25px;margin:0 0 8px}.colony-workshop>p{font-size:12px;line-height:1.55;color:#d6dcf5;margin-bottom:18px}.colony-build-list{display:flex;flex-direction:column;gap:9px}.colony-build-item{background:#202d68;border:2px solid #6478c0;border-radius:15px;display:flex;align-items:center;justify-content:space-between;gap:9px;padding:11px}.colony-build-item.constructed{border-color:#62d8c9;background:#1b526e}.building-copy{flex:1;min-width:0}.building-copy strong,.building-copy small,.building-copy span{display:block}.building-copy strong{font-size:12px}.building-copy small{color:#b5c3e6;font-size:10px;line-height:1.35;margin:5px 0}.building-copy span{color:#ffe395;font-weight:800;font-size:10px}.colony-build-item button{border:2px solid #fff4bf;background:linear-gradient(#ffed91,#ffb85c);color:#6d3a4d;border-radius:11px;box-shadow:0 4px 0 #aa6c72;font-weight:900;white-space:nowrap;padding:8px;font-size:11px}.colony-build-item button:disabled{border-color:#a9f3d6;background:#388e91;color:#d1fff3;box-shadow:0 3px 0 #20566e}.colony-total{display:flex;align-items:center;justify-content:space-between;color:#e0e8fb;margin-top:18px;padding-top:14px;border-top:1px solid #a6b7ee4a;font-size:12px}.colony-total b{color:#ffe398;font-size:19px}.colony-note{margin:24px 0;padding:14px 18px;border:2px solid #6072b1;border-radius:14px;color:#b8c7ed;background:#202c60;font-size:12px;line-height:1.6}
+/* Weekly progress visualization */
+.streak-card{border:2px solid #9ba8f4;border-radius:22px;background:linear-gradient(120deg,#3d5ea9,#7755b2);padding:21px;margin:21px 0;box-shadow:0 5px 0 #313078}.streak-title{display:flex;align-items:center;justify-content:space-between;gap:10px}.streak-title span{font-size:10px;letter-spacing:1.5px;color:#ffe39d;font-weight:900}.streak-title strong{display:block;font-size:17px;margin-top:5px}.streak-title>span{font-weight:900;font-size:12px;color:#4a356b;background:#ffe9a2;border:2px solid white;border-radius:12px;padding:9px;white-space:nowrap}.streak-days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:7px;margin-top:19px}.streak-day{min-width:0;border:2px solid #ffffff72;background:#2e4176c9;border-radius:13px;text-align:center;padding:9px 2px;display:flex;flex-direction:column;gap:5px}.streak-day span{font-size:19px;color:#ffe5a8}.streak-day small{font-weight:900;font-size:9px;color:#bfcbed}.streak-day b{font-size:12px}.streak-day.past{background:#236b7e}.streak-day.next{border-color:#fff6b4;box-shadow:0 0 18px #fff0a356;background:#aa6798}.streak-day.claimed{background:#368d7d}.streak-note{display:block;color:#d7d1ed;font-size:10px;line-height:1.6;margin-top:14px}
+/* Satisfying but non-deceptive decorative reward particles */
+.reward-spark{position:absolute;left:41%;top:48%;font-weight:900;z-index:8;font-size:22px;color:#fff59a;text-shadow:0 2px 5px #954f6e;pointer-events:none;animation:sparkout .8s cubic-bezier(.2,.6,.7,1) forwards}@keyframes sparkout{0%{transform:translate(0,0) scale(.2);opacity:0}20%{opacity:1}85%{opacity:1}100%{transform:translate(var(--sx),var(--sy)) scale(1.1) rotate(45deg);opacity:0}}
+@media(max-width:1160px){.colony-board{grid-template-columns:1fr}.colony-world{min-height:470px}.game-window,.control-panel{box-shadow:0 5px 0 #151d4b,0 14px 35px #070a2855}}
+@media(max-width:760px){.side-nav{grid-template-columns:repeat(5,1fr);background:#15245dea;border-top:2px solid #6988ce}.nav-item{font-size:9px;min-height:56px;gap:3px}.nav-item span{font-size:22px}.nav-item.active{box-shadow:inset 0 2px #ffffff33,0 3px 0 #243c80}.scene{height:330px}.world-parallax{background-position:60% center}.daily-banner{padding:10px;gap:9px}.daily-emblem{width:43px;height:43px;font-size:26px;flex-basis:43px}.daily-banner-copy strong{font-size:13px}.daily-banner-copy small{font-size:10px}.daily-banner button{padding:9px 7px;font-size:10px}.world-teaser{gap:8px;padding:12px}.world-teaser button{font-size:10px}.colony-world{min-height:420px}.streak-days{gap:4px}.streak-day{padding:8px 0}.streak-day b{font-size:10px}.streak-day small{font-size:8px}}
+@media(max-width:425px){.scene{height:278px}.scene-message{font-size:9px;padding:8px 10px}.ship-wrap{width:115px;height:141px;top:47%}.daily-banner-copy strong{font-size:12px}.daily-banner button{font-size:9px;max-width:96px}.world-teaser-icon{display:none}.world-teaser button{max-width:94px;padding:7px}.colony-heading{align-items:flex-start}.colony-count{font-size:9px;padding:8px}.colony-world{min-height:360px}.colony-marker{min-width:75px}.colony-marker .marker-icon{width:50px;height:50px;border-radius:17px;font-size:23px}.colony-marker small{font-size:8px;white-space:normal;max-width:90px}.colony-sky-label{padding:7px 9px}.colony-sky-label b{font-size:12px}.colony-sky-label small{font-size:7px}.colony-scene-label{font-size:8px}.streak-title strong{font-size:14px}.streak-title>span{font-size:9px;padding:7px}.streak-day span{font-size:16px}.streak-day b{font-size:9px}}
+@media(prefers-reduced-motion:reduce){.reward-spark{animation:none;display:none}}
+
+/* Star Atlas: original collectible discovery progression. */
+.atlas-heading{margin:40px 0 19px;display:flex;align-items:end;justify-content:space-between;gap:14px}.atlas-heading .section-eyebrow{margin-bottom:8px}.atlas-heading h2{font-size:clamp(25px,3vw,34px);line-height:1.15;letter-spacing:-.9px}.atlas-heading h2 em{font-style:normal;color:#ffe6a0}.atlas-heading p{font-size:13px;color:#bac9ef;margin-top:10px;line-height:1.5}.atlas-total{flex-shrink:0;color:#fff7d0;border:2px solid #d1b7ff;background:#7758aa;border-radius:15px;padding:11px 14px;font-size:11px;font-weight:900;box-shadow:0 4px 0 #3c336d}.atlas-gallery{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:17px}.atlas-set{min-width:0;padding:18px;border:3px solid #a7a5e5;border-radius:24px;background:linear-gradient(180deg,#485ba5,#242c69);box-shadow:0 7px 0 #20265f,0 17px 34px #0004;position:relative;overflow:hidden}.atlas-set:nth-child(2){background:linear-gradient(180deg,#6255ad,#292a6d);border-color:#b99eec}.atlas-set.complete{border-color:#ffe3a6;box-shadow:0 7px 0 #745294,0 0 26px #f9dc8e44}.atlas-set-head{display:flex;justify-content:space-between;align-items:start;gap:10px}.atlas-set-head small{font-size:9px;letter-spacing:1.8px;color:#c7fbe8;font-weight:900}.atlas-set-head h3{font-size:20px;letter-spacing:-.4px;margin:6px 0}.atlas-set-head p{font-size:11px;color:#d4d8fa;line-height:1.5;margin:0;max-width:260px}.atlas-count{border-radius:10px;background:#263269;border:2px solid #a1b2ff;padding:7px 9px;color:#ffedae;font-size:14px;font-weight:900;white-space:nowrap}.atlas-slots{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin:22px 0 17px}.atlas-tile{min-width:0;text-align:center;border-radius:15px;border:2px solid #d4d7ff6e;background:#1b2b68b8;padding:7px 5px 9px}.atlas-image{aspect-ratio:1;overflow:hidden;border-radius:10px;border:1px solid #ffffff80;background:#263c88;margin:0 auto 9px}.atlas-image img{width:100%;height:100%;object-fit:cover;display:block}.atlas-tile.missing .atlas-image{filter:grayscale(1) brightness(.28);opacity:.75}.atlas-tile strong{display:block;font-size:11px;line-height:1.25;min-height:28px}.atlas-tile small{display:block;font-size:8px;letter-spacing:.5px;color:#c6d5f6;margin-top:6px;font-weight:800}.atlas-tile.missing strong{color:#b6b8d3}.atlas-set-footer{border-top:1px solid #c4cfff50;padding-top:14px;display:flex;align-items:center;justify-content:space-between;gap:9px;font-size:9px;letter-spacing:.4px;font-weight:900;color:#ffe7ad}.atlas-set-footer span:last-child{color:#b6f4e6;text-align:right}.atlas-monuments{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0}.atlas-monument{border-radius:12px;padding:11px 13px;border:2px solid #ffe9aa;background:#775a97;font-size:12px;font-weight:800}.atlas-note{border:1px solid #8094da66;background:#22316cc2;border-radius:13px;color:#bdcbea;font-size:11px;line-height:1.65;padding:13px 16px;margin-top:23px}.relic-reveal{display:flex;align-items:center;gap:14px;border:2px solid #ffe2a1;border-radius:17px;background:linear-gradient(115deg,#7655a9,#3c69ad);padding:13px;margin:9px 0 19px;box-shadow:0 5px 0 #413278;animation:relicPop .4s cubic-bezier(.2,1.2,.5,1)}.relic-reveal[hidden]{display:none}.relic-reveal-art-wrap{flex:0 0 94px;width:94px;height:94px;overflow:hidden;border-radius:14px;border:2px solid #fff0c6;box-shadow:0 4px 0 #513f76}.relic-reveal-art-wrap img{display:block;width:100%;height:100%;object-fit:cover}.relic-reveal small{display:block;font-size:9px;font-weight:900;color:#e9f6c4;letter-spacing:1.2px}.relic-reveal h3{font-size:20px;margin:5px 0}.relic-reveal p{color:#f3ecff;font-size:11px;line-height:1.45}.relic-reveal.is-duplicate{border-color:#7be3ce;background:linear-gradient(115deg,#356c99,#365ca3)}@keyframes relicPop{from{transform:scale(.93);opacity:.3}to{transform:scale(1);opacity:1}}
+@media(max-width:760px){.atlas-gallery{grid-template-columns:1fr}.atlas-heading{align-items:start}.atlas-total{font-size:9px;padding:8px}.atlas-set{padding:15px}.atlas-tile strong{font-size:11px}}@media(max-width:390px){.atlas-slots{gap:5px}.atlas-tile{padding:4px 3px 8px}.atlas-tile strong{font-size:9px}.atlas-tile small{font-size:7px}.relic-reveal-art-wrap{width:72px;height:72px;flex-basis:72px}.relic-reveal h3{font-size:17px}}
+@media(prefers-reduced-motion:reduce){.relic-reveal{animation:none}}
+
+.rewards-colony-link{border:2px solid #fff1cb;border-radius:11px;background:linear-gradient(#ffe9a0,#f9b65e);box-shadow:0 4px 0 #af658a;color:#643957;font-size:10px;font-weight:900;letter-spacing:.5px;padding:9px 12px;margin-top:14px}
+
+.colony-map-monuments{position:absolute;inset:0;z-index:3;pointer-events:none}.colony-map-monument{position:absolute;transform:translate(-50%,-50%);text-align:center;filter:drop-shadow(0 7px 7px #23285b);animation:relicPop .4s both}.colony-map-monument>span{display:grid;place-items:center;margin:auto;width:53px;height:53px;background:linear-gradient(#ffeeb3,#f5ae67);border:3px solid #fff3d2;border-radius:16px;box-shadow:0 4px 0 #b56480;font-size:30px}.colony-map-monument small{display:block;white-space:nowrap;font-weight:900;font-size:9px;margin-top:6px;border-radius:8px;background:#2e316edb;border:1px solid #d7d9fc;padding:4px 6px}@media(max-width:425px){.colony-map-monument>span{width:40px;height:40px;font-size:22px}.colony-map-monument small{font-size:7px}}
+
+/* Transparent relic odds, derived from the same weights used for gameplay. */
+.atlas-odds{margin-top:23px;border:2px solid #91a7ed;background:#22316ce8;border-radius:17px;padding:14px 16px;color:#e4ecff;font-size:12px;line-height:1.55}
+.atlas-odds summary{cursor:pointer;font-weight:900;color:#ffe8ad;display:flex;justify-content:space-between;align-items:center;gap:12px;list-style:none}
+.atlas-odds summary::-webkit-details-marker{display:none}
+.atlas-odds[open] summary span{transform:rotate(180deg)}
+.atlas-odds p{margin:13px 0;color:#cbd8f7}
+.atlas-odds-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.atlas-odds-row{display:flex;align-items:center;justify-content:space-between;gap:8px;background:#111d52;border:1px solid #6179bd;border-radius:10px;padding:9px 10px}
+.atlas-odds-row strong{color:#ffe9a9;font-variant-numeric:tabular-nums}
+@media(max-width:390px){.atlas-odds-grid{grid-template-columns:1fr}}
+
+/* v1.4: all five game sections remain visible and reachable on narrow phones. */
+@media(max-width:760px){
+  .side-nav{grid-template-columns:repeat(5,minmax(0,1fr));}
+  .nav-item{min-width:0;gap:2px;padding:7px 1px;touch-action:manipulation;}
+  .nav-item b{font-size:10px;line-height:1.15;white-space:nowrap;}
+  .app-shell{padding-bottom:calc(90px + env(safe-area-inset-bottom));}
+}
+@media(max-width:355px){.nav-item b{font-size:9px}.nav-item span{font-size:18px}}
+/* Newly discovered relics receive a tactile-looking, rarity-sensitive reveal. */
+.relic-reveal{position:relative;isolation:isolate;overflow:hidden;}
+.relic-reveal-art-wrap{position:relative;z-index:1;transform-origin:center;}
+.relic-reveal.is-new .relic-reveal-art-wrap{animation:relicArrive .72s cubic-bezier(.18,.86,.26,1.22) both;}
+.relic-reveal.is-new:after{content:'✦  ✧  ✦';position:absolute;top:8px;right:12px;font-size:23px;color:#fff8c1;text-shadow:0 0 10px #fffac1,0 0 25px #f9a9dd;pointer-events:none;opacity:0;animation:relicSparkle 1.25s ease-out forwards;}
+.relic-reveal.rarity-uncommon:not(.is-duplicate){border-color:#8eeff9;background:linear-gradient(115deg,#3a62ba,#537cc3);box-shadow:0 5px 0 #274c80,0 0 20px #4be4ff55;}
+.relic-reveal.rarity-rare:not(.is-duplicate){border-color:#fff2a3;border-width:3px;background:linear-gradient(120deg,#8756bd,#be6b9f 52%,#826cd1);box-shadow:0 5px 0 #573b7f,0 0 27px #ffc27f99;}
+.relic-reveal.rarity-rare.is-new .relic-reveal-art-wrap{box-shadow:0 5px 0 #513f76,0 0 22px #ffe3a8,0 0 42px #f7b6ff88;}
+@keyframes relicArrive{0%{transform:perspective(400px) rotateY(-78deg) scale(.60);opacity:0}70%{transform:perspective(400px) rotateY(12deg) scale(1.09);opacity:1}100%{transform:perspective(400px) rotateY(0deg) scale(1);opacity:1}}
+@keyframes relicSparkle{0%{opacity:0;transform:translateY(13px) scale(.7)}25%{opacity:1}75%{opacity:1}100%{opacity:0;transform:translateY(-29px) scale(1.1)}}
+@media(prefers-reduced-motion:reduce){.relic-reveal.is-new .relic-reveal-art-wrap,.relic-reveal.is-new:after{animation:none;}}
+
+/* v1.5: brief, celebratory Nova Haven construction moment; no gameplay advantage. */
+.colony-marker.just-built{z-index:5;isolation:isolate;}
+.colony-marker.just-built .marker-icon{animation:landmarkRise .82s cubic-bezier(.18,1.15,.3,1) both;}
+.colony-marker.just-built::before,.colony-marker.just-built::after{position:absolute;z-index:6;pointer-events:none;color:#fff3a1;text-shadow:0 0 12px #ffe27a,0 0 24px #f7b4ff;}
+.colony-marker.just-built::before{content:'✦';font-size:29px;top:-22px;left:5%;animation:landmarkSparkLeft 1.15s ease-out both;}
+.colony-marker.just-built::after{content:'✧';font-size:27px;top:-13px;right:4%;animation:landmarkSparkRight 1.1s .08s ease-out both;}
+@keyframes landmarkRise{0%{transform:translateY(23px) scale(.45);opacity:.3}58%{transform:translateY(-10px) scale(1.16);opacity:1}100%{transform:translateY(0) scale(1);opacity:1}}
+@keyframes landmarkSparkLeft{0%{transform:translate(8px,15px) scale(.45);opacity:0}20%{opacity:1}100%{transform:translate(-15px,-35px) scale(1.1);opacity:0}}
+@keyframes landmarkSparkRight{0%{transform:translate(-8px,13px) scale(.5);opacity:0}20%{opacity:1}100%{transform:translate(15px,-34px) scale(1);opacity:0}}
+@media(prefers-reduced-motion:reduce){.colony-marker.just-built .marker-icon,.colony-marker.just-built::before,.colony-marker.just-built::after{animation:none}.colony-marker.just-built::before,.colony-marker.just-built::after{display:none}}
+
+/* v2.6: honor OS reduced-motion preference across all game surfaces.
+   Keep reveal content visible while removing perpetual movement and zoom effects. */
+@media (prefers-reduced-motion: reduce) {
+  .scene::before, .ship-wrap, .engine-flame, .view,
+  .relic-reveal, .relic-reveal.is-new .relic-reveal-art-wrap,
+  .relic-reveal.is-new::after, .colony-map-monument,
+  .colony-marker.just-built .marker-icon,
+  .colony-marker.just-built::before, .colony-marker.just-built::after {
+    animation: none !important;
+  }
+  .relic-reveal.is-new::after,
+  .colony-marker.just-built::before, .colony-marker.just-built::after {
+    display: none !important;
+  }
+  .ship-wrap { transform: translate(-50%, -50%) !important; }
+  .progress-fill, .mission-progress > div, .primary-btn, .secondary-btn,
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Non-blocking, accessible daily supply reward confirmation. */
+.daily-claim-reveal{display:flex;align-items:center;gap:16px;padding:17px 20px;margin:14px 0;border:1px solid rgba(255,214,118,.65);border-radius:18px;background:linear-gradient(110deg,rgba(68,44,125,.96),rgba(20,75,111,.94));box-shadow:0 10px 30px rgba(0,0,0,.18)}
+.daily-claim-reveal[hidden]{display:none!important}
+.daily-claim-reveal strong{display:block;color:#fff2ba;font-size:1.15rem}
+.daily-claim-reveal small{display:block;color:#e1eaff;margin-top:4px}
+.claim-reveal-icon{font-size:2.3rem;color:#ffda79;text-shadow:0 0 16px #ffcc6d}
+.claim-reveal-enter{animation:dailyClaimAppear .5s ease-out both}
+@keyframes dailyClaimAppear{from{opacity:0;transform:translateY(10px) scale(.97)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){.claim-reveal-enter{animation:none!important}}
+
+/* Landmark construction confirmation: informative, nonblocking, no reward ambiguity. */
+.landmark-reveal{display:flex;align-items:center;gap:16px;padding:17px 20px;margin:0 0 18px;border:1px solid rgba(121,244,207,.65);border-radius:18px;background:linear-gradient(110deg,rgba(27,84,109,.96),rgba(61,43,119,.94));box-shadow:0 10px 30px rgba(0,0,0,.18)}
+.landmark-reveal[hidden]{display:none!important}
+.landmark-reveal strong{display:block;color:#d9fff2;font-size:1.15rem}
+.landmark-reveal small{display:block;color:#e1eaff;margin-top:4px}
+.landmark-reveal-icon{font-size:2.3rem;text-shadow:0 0 16px #8df9d9}
+.landmark-reveal-enter{animation:dailyClaimAppear .5s ease-out both}
+@media(prefers-reduced-motion:reduce){.landmark-reveal-enter{animation:none!important}}
+
+/* v3.1: saved colony landmarks progressively enliven the island scene. */
+.colony-ambience{position:absolute;inset:0;z-index:1;pointer-events:none}
+.colony-ambient-accent{position:absolute;display:grid;place-items:center;transform:translate(-50%,-50%);width:36px;height:36px;border-radius:50%;font-size:24px;color:#fff5b6;text-shadow:0 2px 7px #3d286e,0 0 18px #f5e2a6;background:radial-gradient(circle,#ffd78b88,transparent 72%);filter:drop-shadow(0 3px 3px #25275b)}
+.colony-world[data-growth="4"] .colony-ambient-accent{background:radial-gradient(circle,#a7ffdd99,transparent 72%)}
+@media(prefers-reduced-motion:no-preference){.colony-ambient-accent{animation:colonyAmbientGlow 3.6s ease-in-out infinite alternate}.colony-ambient-accent:nth-child(even){animation-delay:-1.8s}}
+@keyframes colonyAmbientGlow{from{opacity:.72;filter:drop-shadow(0 2px 2px #25275b)}to{opacity:1;filter:drop-shadow(0 0 12px #ffe7a2)}}
+
+/* v3.2: four distinct architectural silhouettes, built with inexpensive CSS layers. */
+.colony-marker.built .marker-icon{position:relative;isolation:isolate;text-shadow:0 2px 4px #18265777}
+.colony-marker.built .marker-icon::before{content:'';position:absolute;z-index:-1;inset:6px;border-radius:13px;background:var(--landmark-glow);box-shadow:inset 0 2px 8px #ffffff55}
+.colony-marker.landmark-bloom{--landmark-glow:radial-gradient(circle at 50% 35%,#fff7b6,#f4a1d9 65%,#ba5c9c)}
+.colony-marker.landmark-array{--landmark-glow:repeating-linear-gradient(115deg,#fff1a1 0 7px,#edb64b 7px 12px,#8d6cc8 12px 15px)}
+.colony-marker.landmark-observatory{--landmark-glow:radial-gradient(ellipse at 50% 85%,#86e6f7,#5b75d2 65%,#29356e)}
+.colony-marker.landmark-port{--landmark-glow:linear-gradient(140deg,#b9f9ff,#64b4dd 42%,#6766bb 43%,#292b6e)}
+.colony-marker.landmark-array.built .marker-icon{border-radius:12px;transform:perspective(120px) rotateX(7deg)}
+.colony-marker.landmark-observatory.built .marker-icon{border-radius:50% 50% 17px 17px}
+.colony-marker.landmark-port.built .marker-icon{border-radius:26px 26px 11px 11px}
+@media(prefers-reduced-motion:reduce){.colony-marker.landmark-array.built .marker-icon{transform:none}}
+
+/* v3.3: static, GPU-light island depth and environmental lighting. */
+.colony-world{background-color:#4d69ad;background-blend-mode:normal;box-shadow:inset 0 0 65px #14225a55,0 8px 0 #252a67,0 20px 55px #0006}
+.colony-world::before{background:radial-gradient(ellipse at 48% 42%,#fff4b42b 0%,transparent 55%),linear-gradient(180deg,#1d367b20 0%,transparent 44%,#0e1b557d 100%)}
+.colony-world::after{content:'';position:absolute;inset:0;z-index:0;pointer-events:none;background:linear-gradient(120deg,#fff8d914,transparent 40%,#091c5044 100%);box-shadow:inset 0 0 28px #142a5b55}
+.colony-marker.built .marker-icon{box-shadow:inset 0 3px 3px #ffffff88,inset 0 -7px 9px #1d2a5a33,0 6px 0 #77547f,0 13px 18px #101d5988,0 0 23px #fff3a477}
+.colony-marker.built .marker-icon::after{content:'';position:absolute;inset:4px 7px auto 7px;height:35%;border-radius:inherit;background:linear-gradient(#ffffff5c,transparent);pointer-events:none}
+@media(prefers-reduced-motion:reduce){.colony-world,.colony-world::before,.colony-world::after{animation:none!important}}
+
+/* v3.4: saved construction stages distinguish wilderness from thriving settlement. */
+.colony-world[data-growth="0"] .colony-marker.locked .marker-icon{filter:grayscale(.85);opacity:.55;box-shadow:0 4px 0 #3c4774,0 9px 15px #151b4777}
+.colony-world[data-growth="0"] .colony-ambience{opacity:.15}
+.colony-world[data-growth="1"] .colony-ambience{opacity:.6}
+.colony-world[data-growth="2"] .colony-ambience{opacity:.78}
+.colony-world[data-growth="3"] .colony-ambience,.colony-world[data-growth="4"] .colony-ambience{opacity:1}
+.colony-world[data-growth="3"]::after{background:radial-gradient(ellipse at 56% 66%,#a5ffe81c,transparent 65%),linear-gradient(120deg,#fff8d914,transparent 40%,#091c5044)}
+.colony-world[data-growth="4"]::after{background:radial-gradient(ellipse at 54% 60%,#a5ffe838,transparent 68%),linear-gradient(120deg,#fff8d91f,transparent 45%,#091c5033)}
+.colony-world[data-growth="4"] .colony-marker.built .marker-icon{box-shadow:inset 0 3px 3px #ffffff88,inset 0 -7px 9px #1d2a5a33,0 6px 0 #77547f,0 13px 18px #101d5988,0 0 28px #b6ffe8a6}
+@media(prefers-reduced-motion:reduce){.colony-world .colony-ambience{animation:none!important}}
+
+/* Next milestone remains legible without motion or color cues. */
+.colony-next-milestone{padding:14px 16px;margin:14px 0;border:1px solid rgba(137,196,255,.32);border-radius:14px;background:linear-gradient(120deg,rgba(39,62,112,.48),rgba(34,71,86,.30));font-weight:700;line-height:1.55;letter-spacing:.015em}
+.colony-next-milestone[data-ready="true"]{border-color:rgba(148,237,189,.65)}
+.colony-next-milestone[data-ready="complete"]{border-color:rgba(250,215,133,.65)}
+
+/* v3.6: semantic, lightweight next-landmark funding meter */
+.colony-funding{margin:0 0 16px;display:grid;gap:7px;font-size:.86rem;color:#d9eaff}
+.colony-funding progress{display:block;width:100%;height:13px;accent-color:#70e8cb;border:0;border-radius:20px;overflow:hidden;background:#233856}
+.colony-funding progress::-webkit-progress-bar{background:#233856;border-radius:20px}
+.colony-funding progress::-webkit-progress-value{background:linear-gradient(90deg,#5ab9ed,#7af2b8);border-radius:20px}
+.colony-funding progress::-moz-progress-bar{background:#70e8cb;border-radius:20px}
+.colony-funding progress[hidden]{display:none}
+
+/* v8.0: compact, mobile-accessible save-transfer controls. */
+.backup-panel{margin-top:22px}
+.backup-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:16px}
+.backup-actions button{flex:1 1 210px;min-height:44px;cursor:pointer;font-size:12px;padding:12px}
+@media(max-width:760px){.side-nav{grid-template-columns:repeat(5,minmax(0,1fr))}.backup-actions{display:grid;grid-template-columns:1fr}}
+
+#missions-nav { position: relative; }
+#mission-badge:not([hidden]) { position: absolute; right: 3px; top: 1px; background: #a5f4da; color: #11233a; border-radius: 1em; padding: 1px 5px; font: bold 11px/1.3 system-ui; }

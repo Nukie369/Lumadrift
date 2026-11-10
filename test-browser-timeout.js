@@ -1,0 +1,1 @@
+const fs=require('fs'); const assert=require('assert'); const s=fs.readFileSync('browser-colony-check.html','utf8'); assert.match(s,/timeout after 12000ms/); assert.match(s,/stage='\+stage/); assert.match(s,/iframe='\+frame\.getAttribute/); assert.doesNotMatch(s,/,3500\)/); console.log('PASS browser harness timeout and diagnostics');

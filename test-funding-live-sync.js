@@ -1,0 +1,26 @@
+const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
+const src=fs.readFileSync(__dirname+'/game.js','utf8');
+function section(a,b){const start=src.indexOf(a),end=src.indexOf(b,start);assert(start>=0&&end>start);return src.slice(start,end);}
+const nodes={};for(const id of ['colony-next-milestone','colony-funding-progress','colony-funding-label','credits','energy','level','runs','best-haul','total-salvage','streak','upgrades','sound-btn'])nodes[id]={textContent:'',dataset:{},hidden:false,attributes:{},setAttribute(k,v){this.attributes[k]=v;},removeAttribute(k){delete this.attributes[k];}};
+const state={credits:100,buildings:[],dailyClaim:'',dailyStreak:0,xp:0,energy:5,runs:0,best:0,total:0,wins:0,upgrades:{scanner:0},sound:false};
+const context={state,buildingDefs:[{id:'beacon',name:'Sky Beacon',cost:250,bonus:20}],$:id=>nodes[id],document:{getElementById:id=>nodes[id]},nf:new Intl.NumberFormat('en-US'),regen:()=>{},ensureDay:()=>{},level:()=>1,colonyBonus:()=>0,dateKey:()=> '2026-11-09',dayDistance:()=>1,track:()=>{},save:()=>{},renderRewards:()=>{},showDailyClaimReveal:()=>{},notify:()=>{},burst:()=>{},beep:()=>{},Math,Number,Date,console};
+vm.createContext(context);
+vm.runInContext(section('  function renderHeader(){','  function activateTab(')+section('  function claimDaily(){','  function showDailyClaimReveal(')+section('  function colonyFunding(credits,cost){','  function renderColony(){'),context);
+vm.runInContext('renderHeader()',context);
+assert.equal(nodes['colony-funding-progress'].value,100);
+assert.equal(nodes['colony-next-milestone'].dataset.ready,'false');
+vm.runInContext('claimDaily()',context);
+assert.equal(state.credits,200);
+assert.equal(nodes['credits'].textContent,'200');
+assert.equal(nodes['colony-funding-progress'].value,200,'daily claim refreshes colony meter while off colony tab');
+assert.match(nodes['colony-next-milestone'].textContent,/50 more shards needed/);
+vm.runInContext('claimDaily()',context);
+assert.equal(state.credits,200,'repeat claim must not award shards');
+state.credits+=60;vm.runInContext('renderHeader()',context);
+assert.equal(nodes['colony-funding-progress'].value,250,'gameplay balance change is capped at build cost');
+assert.equal(nodes['colony-next-milestone'].dataset.ready,'true');
+assert.match(nodes['colony-next-milestone'].textContent,/Ready to build/);
+state.credits-=100;vm.runInContext('renderHeader()',context);
+assert.equal(nodes['colony-funding-progress'].value,160,'spending updates funding meter without opening colony');
+assert.equal(nodes['colony-next-milestone'].dataset.ready,'false');
+console.log('PASS: daily reward, duplicate claim, gameplay award and spending update funding meter live (11 assertions)');

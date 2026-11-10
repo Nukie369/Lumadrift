@@ -1,0 +1,26 @@
+const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
+const src=fs.readFileSync(__dirname+'/game.js','utf8');
+function section(a,b){const start=src.indexOf(a),end=src.indexOf(b,start);assert(start>=0&&end>start);return src.slice(start,end);}
+const nodes={};for(const id of ['colony-next-milestone','colony-funding-progress','colony-funding-label','credits','energy','level','runs','best-haul','total-salvage','streak','upgrades','sound-btn'])nodes[id]={textContent:'',dataset:{},hidden:false,attributes:{},setAttribute(k,v){this.attributes[k]=v;},removeAttribute(k){delete this.attributes[k];}};
+const state={credits:90,buildings:[],xp:0,energy:5,runs:1,best:0,total:0,wins:0,upgrades:{scanner:0},sound:false};
+let saved=0,marked='unobserved',relicCalls=0;
+const context={state,run:null,buildingDefs:[{id:'beacon',name:'Sky Beacon',cost:250,bonus:20}],$:id=>nodes[id],document:{getElementById:id=>nodes[id]},nf:new Intl.NumberFormat('en-US'),regen:()=>{},ensureDay:()=>{},level:()=>1,colonyBonus:()=>0,track:()=>{},save:()=>saved++,markFlight:x=>marked=x,sceneMessage:()=>{},updateScene:()=>{},addMissionStat:()=>{},beep:()=>{},revealRelic:()=>{relicCalls++;return {id:'pearl',rarity:'RARE',repeated:true,bonus:30};},Math,Number,Date,console};
+vm.createContext(context);
+vm.runInContext(section('  function renderHeader(){','  function activateTab(')+section('  function finish(success,crashed){','  function claimDaily(){')+section('  function colonyFunding(credits,cost){','  function renderColony(){'),context);
+context.run={cargo:100,depth:2,practice:false};vm.runInContext('finish(false,false)',context);
+assert.equal(state.credits,220,'banked cargo and duplicate relic bonus credited');
+assert.equal(state.end.earned,130,'result includes relic bonus');
+assert.equal(nodes['colony-funding-progress'].value,220,'funding meter updated immediately');
+assert.match(nodes['colony-next-milestone'].textContent,/30 more shards needed/);
+assert.equal(relicCalls,1);assert.equal(saved,1);assert.equal(marked,null);
+context.run={cargo:80,depth:3,practice:false};vm.runInContext('finish(true,false)',context);
+assert.equal(state.credits,450,'final beacon bonus and relic bonus included');
+assert.equal(nodes['colony-funding-progress'].value,250,'funding meter capped at cost');
+assert.equal(nodes['colony-next-milestone'].dataset.ready,'true');
+const prior=state.credits;context.run={cargo:999,depth:3,practice:true};vm.runInContext('finish(true,false)',context);
+assert.equal(state.credits,prior,'practice flight cannot earn shards');
+assert.equal(relicCalls,2,'practice flight cannot reveal relics');
+context.run={cargo:999,depth:3,practice:false};vm.runInContext('finish(false,true)',context);
+assert.equal(state.credits,prior,'crashed flight cannot bank cargo');
+assert.equal(relicCalls,2,'crashed flight cannot reveal relics');
+console.log('PASS: flight bank, relic bonus, full-route bonus, practice and crash synchronize colony funding (13 assertions)');

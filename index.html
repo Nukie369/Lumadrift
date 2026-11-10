@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#0b1023">
+  <meta name="description" content="Luma Drift: a free space-salvage adventure. Explore dangerous lanes, collect stardust, and upgrade your ship.">
+  <title>Luma Drift — Salvage the impossible</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="polish.css">
+  <script defer src="game.js"></script>
+</head>
+<body>
+  <div class="stars" aria-hidden="true"></div>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand" aria-label="Luma Drift home"><span class="brand-symbol">✦</span><div><strong>LUMA <i>DRIFT</i></strong><small>THE FRONTIER IS YOURS</small></div></div>
+      <div class="balances">
+        <div class="pill"><span class="coin-icon">✦</span><span id="credits" class="num">0</span><span class="balance-name">SHARDS</span></div>
+        <div class="pill fuel"><span>⚡</span><span id="energy" class="num">5/5</span><span class="balance-name">FUEL</span></div>
+        <button class="icon-btn" id="sound-btn" aria-label="Toggle sound" aria-pressed="false">♪</button>
+      </div>
+    </header>
+
+    <div class="workspace">
+      <nav class="side-nav" aria-label="Game navigation">
+        <button class="nav-item active" data-tab="flight"><span>🚀</span> <b>Explore</b></button>
+        <button class="nav-item" data-tab="colony"><span>🏝️</span> <b>Colony</b></button>
+        <button class="nav-item" data-tab="hangar"><span>🛠</span> <b>Hangar</b></button>
+        <button class="nav-item" data-tab="missions" id="missions-nav"><span>✧</span> <b>Missions</b><small id="mission-badge" hidden aria-hidden="true"></small></button>
+        <button class="nav-item" data-tab="earn"><span>🎁</span> <b>Rewards</b></button>
+        <div class="nav-bottom"><span class="online-dot"></span> OFFLINE PLAYABLE <small>Your progress is saved on this device.</small></div>
+      </nav>
+
+      <main class="main-panel">
+        <section id="flight" class="view active" aria-labelledby="flight-title">
+          <div class="section-eyebrow">SECTOR 07 / THE GLOAM EXPANSE</div>
+          <div class="heading-row"><div><h1 id="flight-title">Salvage the <em>impossible.</em></h1><p>Choose your route. Take the risk. Bring the cargo home.</p></div><div class="level-chip">PILOT LVL <strong id="level">1</strong></div></div>
+          <div class="daily-banner" id="daily-banner">
+            <span class="daily-emblem" aria-hidden="true">🎁</span>
+            <div class="daily-banner-copy"><strong id="checkin-head">Your daily supply is ready!</strong><small id="checkin-sub">Claim shards and keep exploring.</small></div>
+            <button id="checkin-btn" type="button">CLAIM FREE <span aria-hidden="true">✦</span></button>
+          </div>
+          <div class="game-layout">
+            <div class="game-window">
+              <div class="scene-top"><span><span class="live-dot"></span> <span id="scene-label">DOCKED • ORBITAL STATION</span></span><span id="run-counter">RUN 001</span></div>
+              <div class="scene" id="scene">
+<div class="world-parallax" aria-hidden="true"></div><div class="nebula n1"></div><div class="nebula n2"></div>
+                <div class="planet planet-left"></div><div class="planet planet-right"></div>
+                <div class="radar-ring r1"></div><div class="radar-ring r2"></div><div class="radar-ring r3"></div>
+                <div class="ship-wrap" id="ship-wrap"><div class="engine-flame"></div><svg class="ship" viewBox="0 0 160 190" role="img" aria-label="Your salvage ship"><path class="ship-wing" d="M45 87 L4 143 L24 168 L63 146 L79 168 L96 146 L136 168 L155 143 L114 87 L107 44 L80 8 L53 44Z"/><path class="ship-core" d="M80 10 L108 49 L101 142 L80 174 L59 142 L52 49Z"/><path class="ship-highlight" d="M80 20 L97 57 L93 118 L80 139 L67 118 L63 57Z"/><path class="ship-glass" d="M80 43 L94 74 L87 102 L73 102 L66 74Z"/><path class="ship-detail" d="M19 145 L47 109 L54 142 L30 157Z M141 145 L113 109 L106 142 L130 157Z"/></svg></div>
+                <div class="scene-hud hud-l"><small>STARDUST CURRENT</small><b id="stardust">FLUCTUATING</b></div>
+                <div class="scene-hud hud-r"><small>THE UNKNOWN</small><b id="depth-indicator">0 / 5 JUMPS</b></div>
+                <div class="scene-ground"></div>
+                <div id="scene-message" class="scene-message" role="status" aria-live="polite">YOUR SHIP IS READY</div>
+              </div>
+              <div class="scene-bottom"><div><span>HULL INTEGRITY</span><strong id="hull-text">100%</strong></div><div class="progress-track"><div id="hull-bar" class="progress-fill"></div></div></div>
+            </div>
+
+            <div class="control-panel">
+              <div class="eyebrow"><span class="signal"></span> FLIGHT COMPUTER</div>
+              <div id="ready-controls">
+                <h2>Every run is a new discovery.</h2>
+                <p class="muted">Explore five unstable jumps and make it back with your salvage. You can bank your haul early or push deeper for better finds.</p>
+                <div class="stat-pair"><div class="mini-stat"><small>BEST HAUL</small><b id="best-haul">0 ✦</b></div><div class="mini-stat"><small>MISSIONS FLOWN</small><b id="runs">0</b></div></div>
+                <button class="primary-btn" id="launch-btn">LAUNCH EXPEDITION <span>➜</span></button>
+                <button class="text-btn" id="practice-btn">No fuel? Fly a practice run instead</button>
+                <p class="fineprint">Free virtual game. Shards are not money and cannot be redeemed for cash.</p>
+              </div>
+              <div id="run-controls" hidden>
+                <div class="run-summary"><div><small>UNBANKED CARGO</small><div class="haul"><span id="cargo">0</span> <span>✦</span></div></div><div><small>JUMP</small><div class="haul" id="jump">1 / 5</div></div></div>
+                <p class="muted" id="route-prompt">Choose a lane. Each route has different risk and reward.</p>
+                <div id="routes" class="routes"></div>
+                <button class="secondary-btn" id="bank-btn">BANK CARGO & RETURN TO BASE</button>
+                <div class="fair-note" id="flight-forecast" aria-live="polite"></div>
+              </div>
+              <div id="end-controls" hidden>
+                <div id="end-icon" class="end-icon">✦</div><h2 id="end-title">Expedition complete!</h2><p id="end-desc" class="muted"></p>
+                <div class="earned-box"><small>SHARDS BANKED</small><strong id="end-earned">0</strong></div>
+                <div id="relic-reveal" class="relic-reveal" hidden aria-live="polite"><div class="relic-reveal-art-wrap"><img id="relic-reveal-art" src="assets/relic-bloom.svg" alt=""></div><div><small id="relic-reveal-rarity">NEW DISCOVERY</small><h3 id="relic-reveal-name">Prism Bloom</h3><p id="relic-reveal-message">Added to your Star Atlas.</p></div></div>
+                <button class="primary-btn" id="again-btn">FLY AGAIN ➜</button><button class="text-btn" id="end-hangar-btn">Upgrade your ship</button>
+              </div>
+            </div>
+          </div>
+          <div class="world-teaser"><div class="world-teaser-icon">🏝️</div><div><strong>Your home among the stars</strong><span>Turn your discoveries into a growing floating colony.</span></div><button id="goto-colony" type="button">BUILD YOUR WORLD →</button></div>
+          <div class="bottom-stats"><div><span>✧</span><div><b id="total-salvage">0</b><small>Lifetime salvage</small></div></div><div><span>✦</span><div><b id="streak">0</b><small>Successful missions</small></div></div><div><span>◈</span><div><b id="upgrades">0</b><small>Ship upgrades</small></div></div></div>
+        </section>
+
+        <section id="colony" class="view" aria-labelledby="colony-title">
+          <div class="section-eyebrow">NOVA HAVEN / YOUR HOME IN THE STARS</div>
+          <div id="landmark-reveal" class="landmark-reveal" role="status" aria-live="polite" aria-atomic="true" hidden><span class="landmark-reveal-icon" id="landmark-reveal-icon" aria-hidden="true">✦</span><div><strong id="landmark-reveal-title"></strong><small id="landmark-reveal-detail"></small></div></div>
+          <div class="colony-heading"><div><h1 id="colony-title">A world to <em>call yours.</em></h1><p class="subheading">Every expedition helps Nova Haven grow. Unlock landmarks, make the colony shine, and earn a little more from your daily supplies.</p></div><span class="colony-count" id="colony-count">0 / 4 BUILT</span></div>
+          <div class="colony-board">
+            <div class="colony-world" id="colony-world" aria-label="Nova Haven floating colony with unlockable landmarks">
+              <div class="colony-sky-label"><b>✦ NOVA HAVEN</b><small>THE FRONTIER BEGINS HERE</small></div>
+              <div class="colony-island-shadow"></div>
+              <div class="colony-world-markers" id="colony-markers"></div>
+              <div class="colony-map-monuments" id="colony-map-monuments" aria-label="Completed Star Atlas monuments"></div>
+              <div class="colony-scene-label" id="colony-scene-label">A NEW WORLD IS TAKING SHAPE</div>
+            </div>
+            <div class="colony-workshop"><div class="eyebrow">◈ COLONY CONSTRUCTION</div><h2>Build the impossible.</h2><p>Spend virtual shards earned from exploration. Each completed landmark adds a small bonus to future daily supply crates.</p><div class="colony-next-milestone" id="colony-next-milestone" role="status" aria-live="polite" aria-atomic="true"></div><div class="colony-funding"><label for="colony-funding-progress" id="colony-funding-label">Available shards toward next landmark</label><progress id="colony-funding-progress" max="100" value="0"></progress></div><div class="colony-build-list" id="colony-build-list"></div><div class="colony-total">Daily colony bonus <b id="colony-daily-bonus">+0 ✦</b></div></div>
+          </div>
+          <div class="atlas-heading"><div><div class="section-eyebrow">NEW ★ THE STAR ATLAS</div><h2>A universe of <em>discoveries.</em></h2><p id="atlas-subtitle">Collect curious relics by exploring.</p></div><span id="atlas-total" class="atlas-total">0 / 6 DISCOVERED</span></div>
+          <div id="atlas-gallery" class="atlas-gallery" aria-label="Star Atlas collectible sets"></div>
+          <div id="atlas-monuments" class="atlas-monuments" hidden aria-label="Unlocked discovery monuments"></div>
+          <details class="atlas-odds"><summary>View exact relic discovery odds <span aria-hidden="true">⌄</span></summary><p>Each qualifying flight awards one independently drawn relic. These percentages apply to every draw, including after collecting a relic. No paid item changes the odds.</p><div id="atlas-odds-grid" class="atlas-odds-grid" aria-label="Relic drop probabilities"></div><p>Duplicates award 45 virtual shards. Completing a set grants its one-time virtual bonus. Practice flights and flights banked before two jumps award no relic.</p></details>
+          <div class="colony-note">🏡 Nova Haven is your personal, device-saved settlement. Buildings cannot be sold or converted to money. More locations and decorations are planned.</div>
+        </section>
+
+        <section id="hangar" class="view" aria-labelledby="hangar-title">
+          <div class="section-eyebrow">CRAFT • CUSTOMIZE • PROGRESS</div><h1 id="hangar-title">Your ship. <em>Your story.</em></h1><p class="subheading">Earn permanent equipment upgrades with your salvage. Customize your vessel as you explore.</p>
+          <div class="hangar-feature"><div class="hangar-ship">✦</div><div><small>YOUR VESSEL</small><h2>The Wisp</h2><p>Scout-class salvage runner. Small enough to slip between storms. Tough enough to try.</p><span class="small-pill">SKIN: <span id="active-skin-name">AURORA</span></span></div></div>
+          <h2 class="sub-title">Equipment workshop</h2><div id="upgrade-grid" class="shop-grid"></div>
+          <h2 class="sub-title">Color lab</h2><div id="skin-grid" class="shop-grid"></div>
+          <div class="info-panel"><strong>Future premium cosmetics</strong><p>Optional paid visual themes, ship trails, and seasonal cosmetics are planned. No checkout is active in this demo; purchases will require verified Google Play Billing and disclosed prices.</p></div>
+        </section>
+
+        <section id="missions" class="view" aria-labelledby="missions-title">
+          <div class="section-eyebrow">YOUR JOURNEY</div><h1 id="missions-title">Small victories. <em>Big horizons.</em></h1><p class="subheading">Make progress through play. No payment needed to complete these challenges.</p>
+          <div class="mission-heading"><h2>Daily transmissions</h2><span id="day-label" class="small-pill"></span></div><div id="daily-grid" class="mission-grid"></div>
+          <div class="mission-heading"><h2>Career milestones</h2></div><div id="milestone-grid" class="mission-grid"></div>
+        </section>
+
+        <section id="earn" class="view" aria-labelledby="earn-title">
+          <div class="section-eyebrow">REWARDS STATION</div><h1 id="earn-title">The <em>Rewards Deck.</em></h1>
+          <div class="reward-hero"><div class="reward-glyph">✳</div><div><h2>Keep playing. Unlock your universe.</h2><p>Daily missions, free cosmetic unlocks and long-term achievements are live now. Cash rewards are not currently available.</p><button type="button" id="reward-colony-btn" class="rewards-colony-link">EXPLORE NOVA HAVEN →</button></div></div>
+          <div id="daily-claim-reveal" class="daily-claim-reveal" role="status" aria-live="polite" aria-atomic="true" hidden><span class="claim-reveal-icon" aria-hidden="true">✦</span><div><strong id="daily-claim-amount"></strong><small id="daily-claim-total"></small></div></div>
+          <div class="streak-card"><div class="streak-title"><div><span>✦ 7-DAY STAR TRAIL</span><strong id="streak-title">Your rewards grow with each visit</strong></div><span id="streak-count">DAY 0</span></div><div id="streak-days" class="streak-days" aria-label="Seven-day reward cycle"></div><small class="streak-note">You can claim one free crate per day. Missed days restart this optional bonus track.</small></div>
+          <div class="reward-columns"><div class="reward-card"><span class="reward-icon">☀</span><h3>Daily supply crate</h3><p id="daily-reward-description">A free virtual supply crate each day, with streak and colony bonuses.</p><button id="daily-btn" class="secondary-btn">CLAIM TODAY'S SUPPLY</button><small id="daily-status"></small></div><div class="reward-card"><span class="reward-icon">🔐</span><h3>Future sponsored offers</h3><p>An independent, opt-in earn area may be added after sponsor onboarding, legal review and payout integration. No real-money rewards are offered or accrued in this build.</p><button disabled class="secondary-btn">NOT AVAILABLE</button></div></div>
+          <div class="info-panel backup-panel" aria-labelledby="save-backup-heading">
+            <strong id="save-backup-heading">Keep your pilot progress</strong>
+            <p>Progress is stored on this device, not in the cloud. Download a private backup file before changing browsers or devices, then import it here. Neither action costs anything.</p>
+            <div class="backup-actions"><button id="export-backup-btn" type="button" class="secondary-btn">DOWNLOAD SAVE BACKUP</button><button id="import-backup-btn" type="button" class="secondary-btn">IMPORT SAVE BACKUP</button></div>
+            <input id="import-backup-file" type="file" accept="application/json,.json" hidden aria-label="Choose a Luma Drift save backup JSON file">
+            <p>Importing replaces current progress after confirmation. Backups contain virtual-game state only; keep the file private. Unbanked flight cargo is never included.</p>
+          </div>
+          <div class="disclosure"><b>How rewards work</b><p>Shards, upgrades and cosmetics have no cash value, cannot be transferred and cannot be exchanged for real-world prizes. Any future cash program would use separate eligibility, records and published terms. Spending money would not increase cash earning eligibility or rewards.</p></div>
+        </section>
+      </main>
+    </div>
+    <footer class="app-footer"><span>© LUMA DRIFT • PLAYABLE ALPHA v8.0</span><span>Virtual items only · Not a real-money gambling app</span></footer>
+  </div>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+</body></html>

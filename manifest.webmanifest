@@ -1,0 +1,17 @@
+{
+  "name": "Luma Drift \u2014 Salvage Adventure",
+  "short_name": "Luma Drift",
+  "description": "An original space-salvage adventure: explore lanes, bank virtual rewards, build a colony, and collect Star Atlas relics.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#090e1e",
+  "theme_color": "#0b1023",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

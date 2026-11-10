@@ -1,0 +1,13 @@
+const fs=require('node:fs'),assert=require('node:assert/strict');
+const html=fs.readFileSync(__dirname+'/index.html','utf8');
+const js=fs.readFileSync(__dirname+'/game.js','utf8');
+const css=fs.readFileSync(__dirname+'/polish.css','utf8');
+for(const id of ['landmark-reveal','landmark-reveal-icon','landmark-reveal-title','landmark-reveal-detail'])assert.match(html,new RegExp('id="'+id+'"'));
+assert.match(html,/id="landmark-reveal"[^>]*role="status" aria-live="polite" aria-atomic="true" hidden/);
+assert.match(js,/function showLandmarkReveal\(def\)/);
+assert.match(js,/renderRewards\(\);showLandmarkReveal\(def\)/);
+assert.match(js,/def\.bonus\)} virtual shards in each future daily supply/);
+assert.match(js,/nf\.format\(state\.credits\)} shards remaining/);
+assert.match(css,/\.landmark-reveal\[hidden\]\{display:none!important\}/);
+assert.match(css,/@media\(prefers-reduced-motion:reduce\)\{\.landmark-reveal-enter\{animation:none!important\}\}/);
+console.log('PASS: landmark completion reveal, daily bonus disclosure, remaining balance, accessible status, reduced motion');

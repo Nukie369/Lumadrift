@@ -1,0 +1,12 @@
+const fs=require('node:fs'),assert=require('node:assert/strict'),vm=require('node:vm');
+const source=fs.readFileSync('game.js','utf8');
+const match=source.match(/const scenes=(\{[^;]+\});\n    for\(const buildingId of state\.buildings\)/);
+assert.ok(match,'Scenery must be keyed to landmark identity');
+const scenes=vm.runInNewContext('('+match[1]+')');
+const built=['port','bloom'];
+const accents=built.map(id=>scenes[id]);
+assert.deepEqual([...accents[0]],['✧',41,32]);
+assert.deepEqual([...accents[1]],['✿',24,66]);
+assert.deepEqual([...built.reverse().map(id=>scenes[id])].sort((a,b)=>a[0].localeCompare(b[0])),[...accents].sort((a,b)=>a[0].localeCompare(b[0])));
+assert.ok(source.includes('if(!scene)continue'));
+console.log('PASS: scenery follows building identity regardless of construction order');

@@ -1,0 +1,43 @@
+<!doctype html><meta charset="utf-8"><title>Mobile expedition smoke test</title>
+<output id="result">RUNNING</output><iframe width="390" height="844" title="Luma Drift"></iframe>
+<script>
+const frame = document.querySelector('iframe');
+const result = document.querySelector('output');
+for (const key of Object.keys(localStorage)) if (key.startsWith("luma_drift_")) localStorage.removeItem(key);
+frame.onload = () => {
+  try {
+    const doc = frame.contentDocument;
+    const get = id => doc.getElementById(id);
+    const check = (ok, message) => { if (!ok) throw Error(message); };
+    check(get('credits').textContent === '150', 'standalone did not initialize');
+    check(get('mission-badge').hidden, 'unexpected initial mission reward');
+    get('practice-btn').click();
+    check(!get('run-controls').hidden && get('energy').textContent === '5/5', 'practice launch');
+    // Fix the random draw for this test window only so both route outcomes are reproducible.
+    const rng = value => Object.defineProperty(frame.contentWindow.crypto, 'getRandomValues', {
+      configurable: true, value: a => { a.fill(value); return a; }
+    });
+    rng(0xffffffff);
+    get('routes').firstElementChild.click();
+    const cargo = Number(get('cargo').textContent);
+    check(cargo > 0 && get('flight-forecast').textContent.includes(String(Math.floor(cargo * .75)) + ' ✦'), 'cargo forecast');
+    rng(0);
+    get('routes').firstElementChild.click();
+    check(Number(get('cargo').textContent) === Math.floor(cargo * .75), 'storm damage');
+    get('bank-btn').click();
+    check(get('end-earned').textContent === '0', 'practice paid shards');
+    for(let flight = 0; flight < 2; flight++){
+      get('again-btn').click();
+      rng(0xffffffff);
+      get('routes').firstElementChild.click();
+      get('bank-btn').click();
+    }
+    check(get('mission-badge').textContent === '1', 'missing launch mission');
+    get('missions-nav').click();
+    get('daily-grid').querySelector('button:not(:disabled)').click();
+    check(get('mission-badge').hidden, 'claimed mission still marked');
+    result.textContent = 'PASS: standalone boot, mobile flight, storm forecast, banking and mission claims';
+  } catch (err) { result.textContent = 'FAIL: ' + err.message; }
+};
+frame.src = 'luma-drift-standalone-v8.2.html';
+</script>

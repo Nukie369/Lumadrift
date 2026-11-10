@@ -1,0 +1,15 @@
+const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
+const src=fs.readFileSync(__dirname+'/game.js','utf8');
+const section=(a,b)=>{const i=src.indexOf(a),j=src.indexOf(b,i);assert(i>=0&&j>i);return src.slice(i,j);};
+const store=new Map();let torn=false;const STORAGE='luma_test';
+const localStorage={getItem:k=>store.get(k)??null,setItem(k,v){if(k===STORAGE&&torn){store.set(k,'{"credits":');throw Error('torn write');}store.set(k,v);},removeItem:k=>store.delete(k)};
+const baseState={credits:0,xp:0,runs:0,wins:0,best:0,total:0,totalJumps:0,damageTaken:0,energy:5,energyAt:Date.now(),upgrades:{scanner:0,magnet:0,shield:0},dailyProgress:{key:'',launches:0,jumps:0,banked:0,claimed:[]},milestones:[],buildings:[],atlas:{discovered:[],claimed:[],repeats:0},skins:['aurora'],skin:'aurora',dailyClaim:'',dailyStreak:0,sound:false};
+const ctx={localStorage,STORAGE,structuredClone,Date,Math,console,clamp:(x,a,b)=>Math.max(a,Math.min(b,x)),dateKey:()=>'',toLocalDay:()=>new Date(),notify:()=>{},baseState};vm.createContext(ctx);
+vm.runInContext(section('  const safeObject=','  function regen(){')+';let state=structuredClone(baseState);this.setState=x=>state=x;this.readState=readState;this.save=save;',ctx);
+const before=structuredClone(baseState);before.credits=100;before.atlas={discovered:['bloom','pearl','kite','lantern','key'],claimed:['skyward'],repeats:0};store.set(STORAGE,JSON.stringify(before));
+const after=structuredClone(before);after.credits=700;after.atlas.discovered.push('crown');after.atlas.claimed.push('deep');ctx.setState(after);torn=true;ctx.save();
+assert.equal(JSON.parse(store.get(STORAGE+'_pending')).credits,700);
+torn=false;const recovered=ctx.readState();assert.equal(recovered.credits,700);assert.deepEqual(Array.from(recovered.atlas.claimed),['skyward','deep']);assert.equal(store.has(STORAGE+'_pending'),false);
+ctx.setState(recovered);ctx.save();assert.equal(JSON.parse(store.get(STORAGE)).credits,700);
+const again=ctx.readState();assert.equal(again.credits,700);assert.deepEqual(Array.from(again.atlas.claimed),['skyward','deep']);
+console.log('PASS: torn primary restores committed collection reward exactly once via pending checkpoint');

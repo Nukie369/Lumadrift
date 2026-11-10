@@ -1,0 +1,10 @@
+const fs=require('fs'),assert=require('assert');
+const js=fs.readFileSync(__dirname+'/game.js','utf8');
+const css=fs.readFileSync(__dirname+'/polish.css','utf8');
+assert(js.includes('world.dataset.growth=String(state.buildings.length)'));
+assert(js.includes('for(const buildingId of state.buildings)'));
+assert(js.includes("ambience.setAttribute('aria-hidden','true')"));
+assert(js.includes('ambience.replaceChildren()'));
+assert(css.includes('@media(prefers-reduced-motion:no-preference)'));
+assert(css.includes('.colony-ambient-accent'));
+console.log('PASS colony scenery is derived from buildings, accessible and reduced-motion safe');

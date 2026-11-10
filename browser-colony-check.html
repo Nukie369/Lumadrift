@@ -1,0 +1,35 @@
+<!doctype html><meta charset="utf-8"><title>Colony browser regression</title><output id="result">RUNNING</output><iframe id="game" src="about:blank" style="width:390px;height:800px"></iframe>
+<script>
+const result=document.querySelector('#result'),frame=document.querySelector('#game');
+let stage=0,loads=0,lastEvent="initialized";
+window.addEventListener("error",e=>{lastEvent="window error: "+e.message;result.textContent='FAIL: '+lastEvent;});
+window.addEventListener('unhandledrejection',e=>{lastEvent='unhandled rejection: '+String(e.reason);result.textContent='FAIL: '+lastEvent;});
+localStorage.setItem('luma_drift_save_v2',JSON.stringify({credits:500,buildings:[]}));
+frame.addEventListener('error',()=>{lastEvent='iframe resource error';result.textContent='FAIL: '+lastEvent;});
+frame.addEventListener('load',()=>{
+ loads++;lastEvent='iframe loaded '+frame.getAttribute('src');
+ if(frame.getAttribute('src')==='about:blank')return;
+ if(result.textContent!=='RUNNING')return;
+ try{
+ const d=frame.contentDocument;
+ if(stage===0){
+  const p=d.querySelector('#colony-funding-progress');
+  if(p.value!==260||p.max!==260||d.querySelector('#colony-count').textContent.trim()!=='0 / 4 BUILT')throw Error('initial funding wrong');
+  const b=[...d.querySelectorAll('#colony-build-list button')].find(x=>!x.disabled&&/BUILD|CONSTRUCT/i.test(x.textContent));
+  if(!b)throw Error('build button not found');
+  lastEvent='construction button found';
+  b.click();
+  const s=JSON.parse(localStorage.getItem('luma_drift_save_v2'));
+  if(s.credits!==240||!s.buildings.includes('bloom'))throw Error('build not saved');
+  stage=1;lastEvent='construction saved; requesting reload';frame.src='index.html?reload=1';
+ }else{
+  const p=d.querySelector('#colony-funding-progress');
+  if(p.value!==240||p.max!==650)throw Error(`reload meter incorrect: ${p.value}/${p.max}`);
+  if(d.querySelector('#colony-count').textContent.trim()!=='1 / 4 BUILT')throw Error('landmark not restored');
+  result.textContent='PASS: real Chromium construction, shard deduction, reload persistence and next-landmark meter';
+ }
+ }catch(e){lastEvent='assertion: '+e.message;result.textContent='FAIL: '+e.message;}
+});
+frame.src='index.html?initial=1';
+setTimeout(()=>{if(result.textContent==='RUNNING')result.textContent='FAIL: timeout after 12000ms; stage='+stage+'; iframe='+frame.getAttribute('src')+'; loads='+loads+'; last='+lastEvent;},12000);
+</script>
