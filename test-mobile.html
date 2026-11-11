@@ -91,6 +91,7 @@ frame.onload = () => {
     get('routes').firstElementChild.click();
     const cargo = Number(get('cargo').textContent);
     check(cargo > 0 && get('flight-forecast').textContent.includes(String(Math.floor(cargo * .75)) + ' ✦'), 'cargo forecast');
+    check(get('flight-forecast').textContent.includes('Simulated cargo') && get('flight-forecast').textContent.includes('Practice awards no shards'), 'practice storm forecast implies earnable cargo');
     rng(0);
     get('routes').firstElementChild.click();
     check(Number(get('cargo').textContent) === Math.floor(cargo * .75), 'storm damage');
