@@ -13,7 +13,7 @@ frame.onload = () => {
     if (stage === 1) {
       check(get('credits').textContent === expectedCredits, 'mission reward not restored after reload');
       check(get('mission-badge').hidden, 'claimed mission reappeared after reload');
-      check(get('energy').textContent === '5/5', 'practice incorrectly consumed fuel after reload');
+      check(get('energy').textContent === '3/5', 'fuel did not preserve two standard flights and one free practice flight after reload');
       result.textContent = 'PASS: mobile flight, storm forecast, banking, mission claim, reload persistence and practice fuel';
       return;
     }
