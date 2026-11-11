@@ -44,6 +44,8 @@ frame.onload = () => {
       check(get('again-btn').textContent.includes('PRACTICE FREE'), 'zero-fuel results did not offer practice');
       check(get('again-btn').textContent.includes('NO REWARDS'), 'free practice reward disclosure missing');
       check(!get('again-btn').disabled && !get('again-btn').hidden, 'free practice not directly tappable');
+      const replayTarget = get('again-btn').getBoundingClientRect();
+      check(replayTarget.width >= 44 && replayTarget.height >= 44, 'zero-fuel practice touch target smaller than 44 CSS pixels');
       check(!get('end-earned').hidden, 'results disappeared before replay was selected');
       const creditsBeforePractice=get('credits').textContent;
       const missionBadgeBeforePractice=get('mission-badge').textContent;
