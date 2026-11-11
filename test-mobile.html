@@ -80,6 +80,9 @@ frame.onload = () => {
     check(get('mission-badge').hidden, 'unexpected initial mission reward');
     get('practice-btn').click();
     check(!get('run-controls').hidden && get('energy').textContent === '5/5', 'practice launch');
+    const practiceRoute = get('routes').firstElementChild;
+    check(practiceRoute.textContent.includes('simulation only') && practiceRoute.textContent.includes('no rewards'), 'practice route visually implies earnable cargo');
+    check(practiceRoute.getAttribute('aria-label').includes('simulated') && practiceRoute.getAttribute('aria-label').includes('no rewards awarded'), 'practice route accessibility label implies earnable cargo');
     // Fix the random draw for this test window only so both route outcomes are reproducible.
     const rng = value => Object.defineProperty(frame.contentWindow.crypto, 'getRandomValues', {
       configurable: true, value: a => { a.fill(value); return a; }
@@ -96,6 +99,11 @@ frame.onload = () => {
     for(let flight = 0; flight < 2; flight++){
       get('again-btn').click();
       rng(0xffffffff);
+      if (flight === 0) {
+        const standardRoute = get('routes').firstElementChild;
+        check(standardRoute.textContent.includes('if you pass') && !standardRoute.textContent.includes('simulation only'), 'standard flight incorrectly labeled as practice');
+        check(standardRoute.getAttribute('aria-label').includes('earn ') && !standardRoute.getAttribute('aria-label').includes('no rewards awarded'), 'standard route accessibility label incorrectly describes practice');
+      }
       get('routes').firstElementChild.click();
       get('bank-btn').click();
     }
