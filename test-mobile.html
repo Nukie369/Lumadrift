@@ -14,6 +14,7 @@ frame.onload = () => {
       check(get('credits').textContent === expectedCredits, 'mission reward not restored after reload');
       check(get('mission-badge').hidden, 'claimed mission reappeared after reload');
       check(get('energy').textContent === '3/5', 'fuel did not preserve two standard flights and one free practice flight after reload');
+      Object.defineProperty(frame.contentWindow.crypto, 'getRandomValues', {configurable:true,value:a=>{a.fill(0xffffffff);return a;}});
       // Exhaust the remaining three fuel units through normal flights, then replay for free.
       for(let i=0;i<3;i++){
         get('again-btn').click();
