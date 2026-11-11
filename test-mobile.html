@@ -78,7 +78,12 @@ frame.onload = () => {
     check(doc.documentElement.scrollWidth <= doc.documentElement.clientWidth + 2, 'mobile viewport has horizontal overflow');
     check(get('credits').textContent === '150', 'standalone did not initialize');
     check(get('mission-badge').hidden, 'unexpected initial mission reward');
-    get('practice-btn').click();
+    // A returning free player must reach Practice without a paywall or forced offer.
+    const practiceButton = get('practice-btn');
+    check(practiceButton && !practiceButton.disabled && !practiceButton.hidden, 'free practice entry is unavailable');
+    const practiceTarget = practiceButton.getBoundingClientRect();
+    check(practiceTarget.width >= 44 && practiceTarget.height >= 44, 'free practice entry touch target smaller than 44 CSS pixels');
+    practiceButton.click();
     check(!get('run-controls').hidden && get('energy').textContent === '5/5', 'practice launch');
     const practiceRoute = get('routes').firstElementChild;
     check(practiceRoute.textContent.includes('simulation only') && practiceRoute.textContent.includes('no rewards'), 'practice route visually implies earnable cargo');
