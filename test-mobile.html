@@ -72,6 +72,8 @@ frame.onload = () => {
       frame.src = 'luma-drift-standalone-v8.2.html?reload=2';
       return;
     }
+    // Mobile usability: the game must not force sideways page scrolling at 390 CSS pixels.
+    check(doc.documentElement.scrollWidth <= doc.documentElement.clientWidth + 2, 'mobile viewport has horizontal overflow');
     check(get('credits').textContent === '150', 'standalone did not initialize');
     check(get('mission-badge').hidden, 'unexpected initial mission reward');
     get('practice-btn').click();
