@@ -42,6 +42,9 @@ frame.onload = () => {
       }
       check(get('energy').textContent === '0/5', 'standard flights did not consume remaining fuel');
       check(get('again-btn').textContent.includes('PRACTICE FREE'), 'zero-fuel results did not offer practice');
+      check(get('again-btn').textContent.includes('NO REWARDS'), 'free practice reward disclosure missing');
+      check(!get('again-btn').disabled && !get('again-btn').hidden, 'free practice not directly tappable');
+      check(!get('end-earned').hidden, 'results disappeared before replay was selected');
       const creditsBeforePractice=get('credits').textContent;
       const missionBadgeBeforePractice=get('mission-badge').textContent;
       const missionBadgeHiddenBeforePractice=get('mission-badge').hidden;
