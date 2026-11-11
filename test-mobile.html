@@ -12,11 +12,20 @@ frame.onload = () => {
     const doc = frame.contentDocument;
     const get = id => doc.getElementById(id);
     const check = (ok, message) => { if (!ok) throw Error(message); };
+    if (stage === 3) {
+      check(get('credits').textContent === expectedCredits, 'repeated reload duplicated banked cargo or mission rewards');
+      check(get('energy').textContent === '0/5', 'repeated reload changed fuel');
+      check(get('mission-badge').textContent === expectedMissionBadge && get('mission-badge').hidden === expectedMissionHidden, 'repeated reload changed mission state');
+      result.textContent = 'PASS: mobile flights, mission claim, zero-fuel replay, free practice and repeated reload persistence';
+      return;
+    }
     if (stage === 2) {
       check(get('credits').textContent === expectedCredits, 'free practice changed wallet after reload');
       check(get('energy').textContent === '0/5', 'free practice changed fuel after reload');
       check(get('mission-badge').textContent === expectedMissionBadge && get('mission-badge').hidden === expectedMissionHidden, 'free practice changed mission badge after reload');
-      result.textContent = 'PASS: mobile flights, mission claim, zero-fuel replay, free practice and persistence';
+      // Reload once more to catch duplicate reward grants during repeated restoration.
+      stage = 3;
+      frame.src = 'luma-drift-standalone-v8.2.html?reload=3';
       return;
     }
     if (stage === 1) {
