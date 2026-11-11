@@ -90,6 +90,7 @@ frame.onload = () => {
     rng(0xffffffff);
     get('routes').firstElementChild.click();
     const cargo = Number(get('cargo').textContent);
+    check(get('scene-message').textContent.includes('SIMULATED SHARDS / NO REWARDS'), 'successful practice jump implies earnable shards');
     check(cargo > 0 && get('flight-forecast').textContent.includes(String(Math.floor(cargo * .75)) + ' ✦'), 'cargo forecast');
     check(get('flight-forecast').textContent.includes('Simulated cargo') && get('flight-forecast').textContent.includes('Practice awards no shards'), 'practice storm forecast implies earnable cargo');
     rng(0);
