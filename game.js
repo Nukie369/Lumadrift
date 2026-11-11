@@ -318,7 +318,7 @@
     const storm = run.hull === 1
       ? 'Last hull point. A storm ends this flight.'
       : 'A storm costs 1 hull point.';
-    const cargo = run.cargo ? ` Cargo after a hit: ${nf.format(afterHit)} ✦.` : '';
+    const cargo = run.cargo ? (run.practice ? ` Simulated cargo after a hit: ${nf.format(afterHit)} ✦. Practice awards no shards.` : ` Cargo after a hit: ${nf.format(afterHit)} ✦.`) : '';
     const beacon = run.depth === 4 && !run.practice ? ' Survive this jump for the 120-shard beacon bonus.' : '';
     $('flight-forecast').textContent = storm + cargo + beacon;
   }
