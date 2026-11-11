@@ -96,6 +96,7 @@ frame.onload = () => {
     rng(0);
     get('routes').firstElementChild.click();
     check(Number(get('cargo').textContent) === Math.floor(cargo * .75), 'storm damage');
+    check(get('scene-message').textContent.includes('SIMULATED CARGO DAMAGED') && get('scene-message').textContent.includes('NO REWARDS'), 'practice storm implies lost earnable shards');
     get('bank-btn').click();
     check(get('end-earned').textContent === '0', 'practice paid shards');
     for(let flight = 0; flight < 2; flight++){
