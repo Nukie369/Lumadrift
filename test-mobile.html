@@ -25,6 +25,8 @@ frame.onload = () => {
       check(get('energy').textContent === '0/5', 'standard flights did not consume remaining fuel');
       check(get('again-btn').textContent.includes('PRACTICE FREE'), 'zero-fuel results did not offer practice');
       const creditsBeforePractice=get('credits').textContent;
+      const missionBadgeBeforePractice=get('mission-badge').textContent;
+      const missionBadgeHiddenBeforePractice=get('mission-badge').hidden;
       get('again-btn').click();
       check(!get('run-controls').hidden, 'zero-fuel replay did not launch practice');
       check(get('energy').textContent === '0/5', 'practice consumed fuel');
@@ -32,6 +34,7 @@ frame.onload = () => {
       get('bank-btn').click();
       check(get('end-earned').textContent === '0', 'practice granted rewards');
       check(get('credits').textContent === creditsBeforePractice, 'practice changed wallet');
+      check(get('mission-badge').textContent === missionBadgeBeforePractice && get('mission-badge').hidden === missionBadgeHiddenBeforePractice, 'practice changed mission reward availability');
       result.textContent = 'PASS: mobile flights, reload, mission claim, zero-fuel results replay and free practice';
       return;
     }
