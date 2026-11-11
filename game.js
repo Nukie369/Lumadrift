@@ -10,7 +10,7 @@
   const int=(min,max)=>min+Math.floor(random()*(max-min+1));
   const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
   const validNum=(n,fallback=0)=>Number.isFinite(Number(n))?Number(n):fallback;
-  const baseState={credits:150,energy:5,energyAt:Date.now(),xp:0,runs:0,wins:0,best:0,total:0,totalJumps:0,damageTaken:0,upgrades:{scanner:0,magnet:0,shield:0},skins:['aurora'],skin:'aurora',dailyClaim:'',dailyStreak:0,dailyProgress:{key:'',launches:0,jumps:0,banked:0,claimed:[]},milestones:[],buildings:[],atlas:{discovered:[],claimed:[],repeats:0},sound:false};
+  const baseState={credits:150,energy:5,energyAt:Date.now(),xp:0,runs:0,wins:0,best:0,total:0,totalJumps:0,damageTaken:0,upgrades:{scanner:0,magnet:0,shield:0},skins:['aurora'],skin:'aurora',dailyClaim:'',dailyStreak:0,dailyProgress:{key:'',launches:0,jumps:0,banked:0,claimed:[]},milestones:[],buildings:[],atlas:{discovered:[],claimed:[],repeats:0,duplicateStreak:0},sound:false};
   function track(type, details={}){
     try{
       const key='luma_drift_analytics_v1';
@@ -87,19 +87,24 @@
   const atlasArt=id=>`assets/relic-${id}.svg`;
   function revealRelic(){
     const totalWeight=allRelics.reduce((a,r)=>a+r.weight,0);
-    let roll=random()*totalWeight;
-    const relic=allRelics.find(r=>(roll-=r.weight)<0)||allRelics[allRelics.length-1];
+    const missing=allRelics.filter(r=>!state.atlas.discovered.includes(r.id));
+    const protectedDraw=state.atlas.duplicateStreak>=6&&missing.length>0;
+    const pool=protectedDraw?missing:allRelics;
+    const poolWeight=protectedDraw?missing.reduce((sum,r)=>sum+r.weight,0):totalWeight;
+    let roll=random()*poolWeight;
+    const relic=pool.find(r=>(roll-=r.weight)<0)||pool[pool.length-1];
     const repeated=state.atlas.discovered.includes(relic.id);
     const set=atlasSets.find(s=>s.relics.some(r=>r.id===relic.id));
     let bonus=0;
-    if(repeated){state.atlas.repeats++;bonus=45;}
+    if(repeated){state.atlas.repeats++;state.atlas.duplicateStreak=Math.min(6,state.atlas.duplicateStreak+1);bonus=45;}
     else{
+      state.atlas.duplicateStreak=0;
       state.atlas.discovered.push(relic.id);
       if(atlasComplete(set)&&!state.atlas.claimed.includes(set.id)){
         state.atlas.claimed.push(set.id);bonus=set.reward;
       }
     }
-    track('relic-discovery',{relic:relic.id,repeated,set:set.id,bonus});
+    track('relic-discovery',{relic:relic.id,repeated,set:set.id,bonus,protectedDraw});
     return {id:relic.id,name:relic.name,rarity:relic.rarity,repeated,bonus,setName:set.name,completed:!repeated&&atlasComplete(set)};
   }
   const colonyBonus=()=>buildingDefs.reduce((sum,b)=>sum+(state.buildings.includes(b.id)?b.bonus:0),0);
@@ -134,6 +139,7 @@
     s.atlas.discovered=Array.isArray(atlas.discovered)?[...new Set(atlas.discovered.filter(id=>['bloom','pearl','kite','lantern','key','crown'].includes(id)))]:[];
     s.atlas.claimed=Array.isArray(atlas.claimed)?[...new Set(atlas.claimed.filter(id=>['skyward','deep'].includes(id)))]:[];
     s.atlas.repeats=safeCount(atlas.repeats);
+    s.atlas.duplicateStreak=s.atlas.discovered.length===6?0:safeCount(atlas.duplicateStreak,6);
     s.skins=Array.isArray(data.skins)?[...new Set(['aurora',...data.skins.filter(id=>['aurora','ember','phantom','verdant'].includes(id))])]:['aurora'];
     s.skin=s.skins.includes(data.skin)?data.skin:'aurora';
     s.dailyClaim=safeDate(data.dailyClaim);
@@ -357,8 +363,9 @@
     $('atlas-total').textContent=`${owned} / ${allRelics.length} DISCOVERED`;
     const totalWeight=allRelics.reduce((sum,relic)=>sum+relic.weight,0);
     const missingWeight=allRelics.reduce((sum,relic)=>sum+(state.atlas.discovered.includes(relic.id)?0:relic.weight),0);
-    const newChance=(missingWeight/totalWeight*100).toFixed(1).replace(/\.0$/,'');
-    $('atlas-subtitle').textContent=`Recover a relic when you safely bank after at least two jumps. ${owned} unique relic${owned===1?'':'s'} collected. Next draw: ${newChance}% chance of a new relic; draws are independent and duplicates remain possible.`;
+    const protectedDraw=state.atlas.duplicateStreak>=6&&owned<allRelics.length;
+    const newChance=(protectedDraw?100:missingWeight/totalWeight*100).toFixed(1).replace(/\.0$/,'');
+    $('atlas-subtitle').textContent=`Recover a relic when you safely bank after at least two jumps. ${owned} unique relic${owned===1?'':'s'} collected. Next draw: ${newChance}% chance of a new relic. ${protectedDraw?'Duplicate protection active: your next draw is guaranteed new.':`Duplicate streak ${state.atlas.duplicateStreak}/6; after six consecutive duplicates, the next draw is guaranteed new.`} Normal draws use independent weighted odds.`;
     const gallery=$('atlas-gallery');gallery.replaceChildren();
     for(const set of atlasSets){
       const collected=set.relics.filter(r=>state.atlas.discovered.includes(r.id)).length;
