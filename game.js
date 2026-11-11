@@ -355,7 +355,10 @@
     renderAtlasOdds();
     const owned=state.atlas.discovered.length;
     $('atlas-total').textContent=`${owned} / ${allRelics.length} DISCOVERED`;
-    $('atlas-subtitle').textContent=`Recover a relic when you safely bank after at least two jumps. ${owned} unique relic${owned===1?'':'s'} collected.`;
+    const totalWeight=allRelics.reduce((sum,relic)=>sum+relic.weight,0);
+    const missingWeight=allRelics.reduce((sum,relic)=>sum+(state.atlas.discovered.includes(relic.id)?0:relic.weight),0);
+    const newChance=(missingWeight/totalWeight*100).toFixed(1).replace(/\\.0$/,'');
+    $('atlas-subtitle').textContent=`Recover a relic when you safely bank after at least two jumps. ${owned} unique relic${owned===1?'':'s'} collected. Next draw: ${newChance}% chance of a new relic; draws are independent and duplicates remain possible.`;
     const gallery=$('atlas-gallery');gallery.replaceChildren();
     for(const set of atlasSets){
       const collected=set.relics.filter(r=>state.atlas.discovered.includes(r.id)).length;
