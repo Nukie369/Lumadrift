@@ -102,6 +102,7 @@ frame.onload = () => {
     get('routes').firstElementChild.click();
     check(Number(get('cargo').textContent) === Math.floor(cargo * .75), 'storm damage');
     check(get('scene-message').textContent.includes('SIMULATED CARGO DAMAGED') && get('scene-message').textContent.includes('NO REWARDS'), 'practice storm implies lost earnable shards');
+    check(!get('flight-forecast').textContent.includes('Star Atlas'), 'practice incorrectly promises a relic draw');
     get('bank-btn').click();
     check(get('end-earned').textContent === '0', 'practice paid shards');
     for(let flight = 0; flight < 2; flight++){
@@ -113,6 +114,13 @@ frame.onload = () => {
         check(standardRoute.getAttribute('aria-label').includes('earn ') && !standardRoute.getAttribute('aria-label').includes('no rewards awarded'), 'standard route accessibility label incorrectly describes practice');
       }
       get('routes').firstElementChild.click();
+      if (flight === 0) {
+        check(get('flight-forecast').textContent.includes('1 more safe or storm-survived jump'), 'Atlas eligibility threshold not explained after first jump');
+        get('routes').firstElementChild.click();
+        const forecast = get('flight-forecast').textContent;
+        check(forecast.includes('Bank now to secure one free Star Atlas relic draw'), 'eligible flight does not explain banked relic');
+        check(forecast.includes('risks losing the draw'), 'eligible flight does not explain pushing risk');
+      }
       get('bank-btn').click();
     }
     check(get('mission-badge').textContent === '1', 'missing launch mission');
