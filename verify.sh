@@ -14,7 +14,10 @@ print('Standalone artifact:',p.stat().st_size,'bytes')
 PY
 count=0
 for test in test-*.js; do
-  node "$test" >/dev/null
+  if ! output=$(node "$test" 2>&1); then
+    printf 'FAIL: %s\n%s\n' "$test" "$output" >&2
+    exit 1
+  fi
   count=$((count+1))
 done
 printf 'PASS: %s Node regression scripts\n' "$count"
