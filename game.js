@@ -105,7 +105,7 @@
       }
     }
     track('relic-discovery',{relic:relic.id,repeated,set:set.id,bonus,protectedDraw});
-    return {id:relic.id,name:relic.name,rarity:relic.rarity,repeated,bonus,setName:set.name,completed:!repeated&&atlasComplete(set)};
+    return {id:relic.id,name:relic.name,rarity:relic.rarity,repeated,bonus,setName:set.name,completed:!repeated&&atlasComplete(set),protectedDraw};
   }
   const colonyBonus=()=>buildingDefs.reduce((sum,b)=>sum+(state.buildings.includes(b.id)?b.bonus:0),0);
   const missionDefs=[{id:'launches',icon:'🚀',name:'First contact',desc:'Launch 2 expeditions today.',goal:2,reward:110},
@@ -343,11 +343,11 @@
     el.hidden=false;
     const art=$('relic-reveal-art');art.src=atlasArt(relic.id);art.alt='Illustration of '+relic.name;
     $('relic-reveal-name').textContent=relic.name;
-    $('relic-reveal-rarity').textContent=relic.rarity+' • '+relic.setName;
+    $('relic-reveal-rarity').textContent=relic.rarity+' • '+relic.setName+(relic.protectedDraw?' • GUARANTEED NEW':'');
     $('relic-reveal-message').textContent=relic.completed
       ?`Collection complete! +${nf.format(relic.bonus)} bonus shards and a new colony monument.`
       :relic.repeated?`Duplicate converted into +${nf.format(relic.bonus)} virtual shards.`
-      :'A new relic has joined your Star Atlas.';
+      :relic.protectedDraw?'Duplicate protection delivered a guaranteed new relic.':'A new relic has joined your Star Atlas.';
     el.classList.toggle('is-duplicate',relic.repeated);
     el.classList.toggle('is-new',!relic.repeated);
     el.classList.toggle('rarity-rare',relic.rarity==='RARE');
