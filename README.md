@@ -2,6 +2,8 @@
 
 Run `./verify.sh` to test the game and build `luma-drift-standalone-v8.2.html`. Open the resulting file to play offline. The Missions tab counts unclaimed rewards. In flight, the storm forecast shows the hull risk, remaining cargo after a hit, and the final beacon bonus.
 
+Before committing changes to hosted game assets, run `python3 version_sw.py` to refresh the offline cache fingerprint. CI checks the committed worker.
+
 ## Alpha v8.0
 
 **Archived build:** `luma-drift-standalone-v8.0.html` (local browser alpha).
