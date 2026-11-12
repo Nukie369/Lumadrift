@@ -13,11 +13,13 @@ assert p.exists() and p.stat().st_size > 100000
 print('Standalone artifact:',p.stat().st_size,'bytes')
 PY
 count=0
+failures=0
 for test in test-*.js; do
   if ! output=$(node "$test" 2>&1); then
     printf 'FAIL: %s\n%s\n' "$test" "$output" >&2
-    exit 1
+    failures=$((failures+1))
   fi
   count=$((count+1))
 done
-printf 'PASS: %s Node regression scripts\n' "$count"
+printf 'Completed %s Node regression scripts; failures: %s\n' "$count" "$failures"
+if (( failures > 0 )); then exit 1; fi
