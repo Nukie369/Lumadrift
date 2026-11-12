@@ -3,6 +3,7 @@ set -euo pipefail
 cd "$(dirname "$0")"
 node --check game.js
 node --check sw.js
+python3 version_sw.py
 python3 version_sw.py --check
 python3 build_standalone.py
 python3 - <<'PY'
