@@ -61,6 +61,21 @@ def run(browser, temp):
             assert page.locator('body').get_attribute('data-release') == label, label
             return page
 
+        def activate_release(page, current, target):
+            page.evaluate('async () => { await (await navigator.serviceWorker.ready).update() }')
+            page.wait_for_function('async () => !!(await navigator.serviceWorker.ready).waiting')
+            assert page.locator('body').get_attribute('data-release') == current
+            assert page.evaluate("""async () => (await (await fetch('game.js')).text())
+                                  .includes("dataset.release = '" + document.body.dataset.release + "'")""")
+            page.close()
+            observer.wait_for_function("""async () => {
+              const reg = await navigator.serviceWorker.getRegistration('/game/');
+              return reg?.active?.state === 'activated' && !reg.waiting && !reg.installing;
+            }""")
+            page = open_game(target)
+            assert page.locator('#credits').inner_text() == credits, 'Saved reward lost on upgrade'
+            return page
+
         page = open_game('A')
         page.wait_for_function('!!navigator.serviceWorker.controller')
         page.locator('#daily-btn').evaluate('button => button.click()')
@@ -74,18 +89,7 @@ def run(browser, temp):
 
         for current, target in [('A', 'B'), ('B', 'C')]:
             release(target)
-            page.evaluate('async () => { await (await navigator.serviceWorker.ready).update() }')
-            page.wait_for_function('async () => !!(await navigator.serviceWorker.ready).waiting')
-            assert page.locator('body').get_attribute('data-release') == current
-            assert page.evaluate("""async () => (await (await fetch('game.js')).text())
-                                  .includes("dataset.release = '" + document.body.dataset.release + "'")""")
-            page.close()
-            observer.wait_for_function("""async () => {
-              const reg = await navigator.serviceWorker.getRegistration('/game/');
-              return reg?.active?.state === 'activated' && !reg.waiting && !reg.installing;
-            }""")
-            page = open_game(target)
-            assert page.locator('#credits').inner_text() == credits, 'Saved reward lost on upgrade'
+            page = activate_release(page, current, target)
             print(f'{current} to {target}: new code and original credits on reopen', flush=True)
 
         release('D')
@@ -117,6 +121,18 @@ def run(browser, temp):
         page.locator('#routes button').first.click()
         assert page.locator('#jump').inner_text().startswith('2'), 'Offline flight did not advance'
         print('Failed D install: reopened C offline, loaded artwork, kept credits, flew a route')
+        # Retry the exact failed worker once the missing file returns.
+        shutil.copyfile(ROOT / 'assets/relic-key.svg', game / 'assets/relic-key.svg')
+        Thread(target=server.serve_forever, daemon=True).start()
+        context.set_offline(False)
+        page = activate_release(page, 'C', 'D')
+        page.close()
+        server.shutdown()
+        context.set_offline(True)
+        page = open_game('D', 'index.html')
+        assert page.locator('#credits').inner_text() == credits, 'Lost credits after retry'
+        assert page.evaluate("async () => (await fetch('assets/relic-key.svg')).ok")
+        print('Repaired D: same worker retried successfully and reopened offline with saved credits')
         context.close()
 
 
