@@ -74,14 +74,20 @@
   const allRelics=atlasSets.flatMap(s=>s.relics);
   function renderAtlasOdds(){
     const grid=$('atlas-odds-grid');if(!grid)return;
-    const total=allRelics.reduce((sum,relic)=>sum+relic.weight,0);
+    const missing=allRelics.filter(relic=>!state.atlas.discovered.includes(relic.id));
+    const protectedDraw=state.atlas.duplicateStreak>=6&&missing.length>0;
+    const pool=protectedDraw?missing:allRelics;
+    const total=pool.reduce((sum,relic)=>sum+relic.weight,0);
     grid.replaceChildren();
     for(const relic of allRelics){
       const item=document.createElement('div');item.className='atlas-odds-row';
       const label=document.createElement('span');label.textContent=relic.name;
-      const percent=document.createElement('strong');percent.textContent=`${(relic.weight/total*100).toFixed(1).replace(/\.0$/,'')}%`;
+      const percent=document.createElement('strong');
+      const weight=protectedDraw&&state.atlas.discovered.includes(relic.id)?0:relic.weight;
+      percent.textContent=`${(weight/total*100).toFixed(1).replace(/\.0$/,'')}%`;
       item.append(label,percent);grid.append(item);
     }
+    grid.setAttribute('aria-label',protectedDraw?'Next draw odds: duplicate protection active':'Next draw odds: standard weighted draw');
   }
   const atlasComplete=set=>set.relics.every(r=>state.atlas.discovered.includes(r.id));
   const atlasArt=id=>`assets/relic-${id}.svg`;
