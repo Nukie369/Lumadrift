@@ -32,6 +32,10 @@ frame.onload = () => {
         get('routes').firstElementChild.click();
         get('bank-btn').click();
         check(Number(get('credits').textContent.replace(/,/g, '')) > creditsBeforeRecharge, 'recharged standard flight failed to award banked cargo');
+        // Repeated taps on Bank must never duplicate the same flight's wallet reward.
+        const creditsAfterBank = get('credits').textContent;
+        get('bank-btn').click();
+        check(get('credits').textContent === creditsAfterBank, 'double bank tap duplicated flight rewards');
       } finally {
         clock.now = originalNow;
       }
