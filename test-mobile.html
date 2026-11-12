@@ -81,6 +81,12 @@ frame.onload = () => {
     check(get('atlas-total').textContent === '0 / 6 DISCOVERED', 'new player Atlas count incorrect');
     check(get('atlas-subtitle').textContent.includes('Next draw: 100% chance of a new relic'), 'new player Atlas odds not disclosed');
     check(get('atlas-subtitle').textContent.includes('Duplicate streak 0/6'), 'new player duplicate protection not disclosed');
+    // Player-facing odds must enumerate all relics and total approximately 100% (rounding to tenths).
+    const initialOdds = [...get('atlas-odds-grid').children];
+    check(initialOdds.length === 6, 'initial odds table does not enumerate six relics');
+    const initialPercentages = initialOdds.map(row => Number(row.querySelector('strong')?.textContent.replace('%', '')));
+    check(initialPercentages.every(value => Number.isFinite(value) && value > 0), 'initial odds contain missing or invalid percentages');
+    check(Math.abs(initialPercentages.reduce((a,b) => a+b, 0) - 100) <= 0.3, 'initial odds do not total approximately 100%');
     // A returning free player must reach Practice without a paywall or forced offer.
     const practiceButton = get('practice-btn');
     check(practiceButton && !practiceButton.disabled && !practiceButton.hidden, 'free practice entry is unavailable');
@@ -132,6 +138,9 @@ frame.onload = () => {
         check(odds.includes('Next draw:') && odds.includes('chance of a new relic'), 'Atlas odds missing after first discovery');
         check(!odds.includes('Next draw: 100%'), 'Atlas odds did not decrease after discovery');
         check(odds.includes('Duplicate streak 0/6'), 'new discovery did not reset duplicate streak');
+        const postDiscoveryOdds = [...get('atlas-odds-grid').children].map(row => Number(row.querySelector('strong')?.textContent.replace('%', '')));
+        check(postDiscoveryOdds.length === 6 && postDiscoveryOdds.every(Number.isFinite), 'post-discovery odds are missing');
+        check(Math.abs(postDiscoveryOdds.reduce((a,b) => a+b, 0) - 100) <= 0.3, 'post-discovery odds do not total approximately 100%');
       }
     }
     check(get('mission-badge').textContent === '1', 'missing launch mission');
