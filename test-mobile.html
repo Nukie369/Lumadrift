@@ -17,7 +17,25 @@ frame.onload = () => {
       check(get('atlas-total').textContent === '1 / 6 DISCOVERED', 'repeated reload changed banked relic collection');
       check(get('energy').textContent === '0/5', 'repeated reload changed fuel');
       check(get('mission-badge').textContent === expectedMissionBadge && get('mission-badge').hidden === expectedMissionHidden, 'repeated reload changed mission state');
-      result.textContent = 'PASS: mobile flights, mission claim, zero-fuel replay, free practice and repeated reload persistence';
+      // Simulate a 20-minute recharge while the results screen stays open.
+      // The next replay must be a normal reward-earning flight, not free Practice.
+      const clock = frame.contentWindow.Date;
+      const originalNow = clock.now;
+      const creditsBeforeRecharge = Number(get('credits').textContent.replace(/,/g, ''));
+      try {
+        clock.now = () => originalNow() + 1200001;
+        get('again-btn').click();
+        check(!get('run-controls').hidden, 'recharged results replay did not launch');
+        check(get('energy').textContent === '0/5', 'recharged flight did not spend its one recovered fuel');
+        check(!get('routes').firstElementChild.textContent.includes('simulation only'), 'recharged replay incorrectly launched free practice');
+        Object.defineProperty(frame.contentWindow.crypto, 'getRandomValues', {configurable:true,value:a=>{a.fill(0xffffffff);return a;}});
+        get('routes').firstElementChild.click();
+        get('bank-btn').click();
+        check(Number(get('credits').textContent.replace(/,/g, '')) > creditsBeforeRecharge, 'recharged standard flight failed to award banked cargo');
+      } finally {
+        clock.now = originalNow;
+      }
+      result.textContent = 'PASS: mobile flights, mission claim, zero-fuel replay, reload persistence and recharged standard replay';
       return;
     }
     if (stage === 2) {
