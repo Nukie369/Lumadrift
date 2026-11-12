@@ -24,9 +24,13 @@ self.addEventListener('activate', event => {
 
 self.addEventListener('fetch', event => {
   const request = event.request;
-  if (request.method !== 'GET' || new URL(request.url).origin !== self.location.origin) return;
+  const url = new URL(request.url);
+  if (request.method !== 'GET' || url.origin !== self.location.origin) return;
   event.respondWith((async () => {
     const cache = await caches.open(CACHE);
-    return await cache.match(request) || fetch(request);
+    const scope = self.registration.scope;
+    const isShellNavigation = request.mode === 'navigate' &&
+      (url.pathname === new URL(scope).pathname || url.pathname === new URL('index.html', scope).pathname);
+    return await cache.match(request, {ignoreSearch: isShellNavigation}) || fetch(request);
   })());
 });

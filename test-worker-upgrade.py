@@ -55,9 +55,9 @@ def run(browser, temp):
         observer = context.new_page()
         observer.goto(origin + '/observer.html')
 
-        def open_game(label):
+        def open_game(label, entry=""):
             page = context.new_page()
-            page.goto(origin + '/game/')
+            page.goto(origin + '/game/' + entry)
             assert page.locator('body').get_attribute('data-release') == label, label
             return page
 
@@ -106,8 +106,12 @@ def run(browser, temp):
         page.close()
         server.shutdown()
         context.set_offline(True)
-        page = open_game('C')
-        assert page.locator('#credits').inner_text() == credits, 'Saved reward lost offline'
+        for entry in ('', '?source=return', 'index.html'):
+            page = open_game('C', entry)
+            assert page.locator('#credits').inner_text() == credits, f'Saved reward lost at {entry}'
+            page.close()
+        page = open_game('C', 'index.html?source=home')
+        assert page.locator('#credits').inner_text() == credits, 'Saved reward lost on offline launch'
         assert page.evaluate("""async () => (await fetch('assets/relic-key.svg')).ok""")
         page.locator('#practice-btn').click()
         page.locator('#routes button').first.click()
