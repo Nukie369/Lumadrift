@@ -78,6 +78,9 @@ frame.onload = () => {
     check(doc.documentElement.scrollWidth <= doc.documentElement.clientWidth + 2, 'mobile viewport has horizontal overflow');
     check(get('credits').textContent === '150', 'standalone did not initialize');
     check(get('mission-badge').hidden, 'unexpected initial mission reward');
+    check(get('atlas-total').textContent === '0 / 6 DISCOVERED', 'new player Atlas count incorrect');
+    check(get('atlas-subtitle').textContent.includes('Next draw: 100% chance of a new relic'), 'new player Atlas odds not disclosed');
+    check(get('atlas-subtitle').textContent.includes('Duplicate streak 0/6'), 'new player duplicate protection not disclosed');
     // A returning free player must reach Practice without a paywall or forced offer.
     const practiceButton = get('practice-btn');
     check(practiceButton && !practiceButton.disabled && !practiceButton.hidden, 'free practice entry is unavailable');
@@ -122,6 +125,14 @@ frame.onload = () => {
         check(forecast.includes('risks losing the draw'), 'eligible flight does not explain pushing risk');
       }
       get('bank-btn').click();
+      if (flight === 0) {
+        check(!get('relic-reveal').hidden, 'eligible bank did not show relic reveal');
+        check(get('atlas-total').textContent === '1 / 6 DISCOVERED', 'banked relic did not update Atlas count');
+        const odds = get('atlas-subtitle').textContent;
+        check(odds.includes('Next draw:') && odds.includes('chance of a new relic'), 'Atlas odds missing after first discovery');
+        check(!odds.includes('Next draw: 100%'), 'Atlas odds did not decrease after discovery');
+        check(odds.includes('Duplicate streak 0/6'), 'new discovery did not reset duplicate streak');
+      }
     }
     check(get('mission-badge').textContent === '1', 'missing launch mission');
     get('missions-nav').click();
