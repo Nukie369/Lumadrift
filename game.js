@@ -185,7 +185,7 @@
       try{backup=parseSaved(localStorage.getItem(BACKUP_STORAGE));}catch{/* Corrupt backup. */}
       // Only verified checkpoints compete. On equal revisions, a committed
       // primary wins over an uncommitted journal, then the recovery backup.
-      const candidates=[{state:pending,source:'pending'},{state:committed,source:'primary'},{state:backup,source:'backup'}];
+      const candidates=[{state:committed,source:'primary'},{state:pending,source:'pending'},{state:backup,source:'backup'}];
       const winner=candidates.filter(item=>item.state).sort((a,b)=>b.state.saveRevision-a.state.saveRevision)[0];
       if(!winner){
         if([primary,localStorage.getItem(PENDING_STORAGE),localStorage.getItem(BACKUP_STORAGE)].some(v=>v!==null)){
