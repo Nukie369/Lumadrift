@@ -44,6 +44,8 @@ frame.onload = () => {
       const creditsBeforeRecharge = Number(get('credits').textContent.replace(/,/g, ''));
       try {
         clock.now = () => originalNow() + 1200001;
+        check(!get('again-btn').disabled && !get('again-btn').hidden, 'recharged replay button unavailable');
+        tapCenter(get('again-btn'));
         get('again-btn').click();
         check(!get('run-controls').hidden, 'recharged results replay did not launch');
         check(get('energy').textContent === '0/5', 'recharged flight did not spend its one recovered fuel');
