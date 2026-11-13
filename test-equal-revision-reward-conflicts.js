@@ -18,9 +18,9 @@ function scenario(primary,backup,pending,expected,source){
  const saved=ctx.readState();assert.equal(saved.credits,expected+17);assert.equal(saved.atlas.claimed.includes('skyward'),source);assert.equal(saved.saveRevision,13);
  assert.equal(store.has(STORAGE+'_pending'),false);
 }
-// A verified pending transaction is authoritative on equal revisions, preserving interrupted commits.
-scenario(cp(100,true),cp(200,false),cp(300,false),300,false);
-scenario(cp(100,false),cp(200,true),cp(300,true),300,true);
+// At equal revisions, the committed primary is authoritative; an unfinished journal must not replay rewards.
+scenario(cp(100,true),cp(200,false),cp(300,false),100,true);
+scenario(cp(100,false),cp(200,true),cp(300,true),100,false);
 // Without primary, the pending transaction wins over the backup at equal revision.
 scenario('{corrupt',cp(200,false),cp(300,true),300,true);
 scenario(null,cp(200,true),cp(300,false),300,false);
