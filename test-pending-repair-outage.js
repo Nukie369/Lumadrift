@@ -5,8 +5,8 @@ assert(start>=0&&end>start);
 const STORAGE='luma_pending_repair';
 const baseState={credits:0,xp:0,runs:0,wins:0,best:0,total:0,totalJumps:0,damageTaken:0,energy:5,energyAt:Date.now(),upgrades:{scanner:0,magnet:0,shield:0},dailyProgress:{key:'',launches:0,jumps:0,banked:0,claimed:[]},milestones:[],buildings:[],atlas:{discovered:[],claimed:[],repeats:0},skins:['aurora'],skin:'aurora',dailyClaim:'',dailyStreak:0,sound:false};
 for(const mode of ['throw','silent']){
- const previous=structuredClone(baseState);previous.credits=120;
- const completed=structuredClone(baseState);completed.credits=720;completed.atlas.discovered=['pearl','lantern','key'];completed.atlas.claimed=['deep'];
+ const previous=structuredClone(baseState);previous.saveRevision=0;previous.credits=120;
+ const completed=structuredClone(baseState);completed.saveRevision=1;completed.credits=720;completed.atlas.discovered=['pearl','lantern','key'];completed.atlas.claimed=['deep'];
  const store=new Map([[STORAGE,JSON.stringify(previous)],[STORAGE+'_pending',JSON.stringify(completed)]]);
  let outage=true;
  const localStorage={getItem:k=>store.get(k)??null,setItem(k,v){if(outage&&k===STORAGE){if(mode==='throw')throw Error('storage unavailable');return;}store.set(k,v);},removeItem:k=>store.delete(k)};
