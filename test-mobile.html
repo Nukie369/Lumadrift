@@ -135,6 +135,11 @@ frame.onload = async () => {
       check(get('mission-badge').textContent === missionBadgeBeforePractice && get('mission-badge').hidden === missionBadgeHiddenBeforePractice, 'practice changed mission reward availability');
       // A second replay must remain freely playable rather than trapping an empty-tank player.
       check(get('again-btn').textContent.includes('PRACTICE FREE'), 'practice results did not offer another free replay');
+      check(get('again-btn').textContent.includes('NO REWARDS'), 'second free replay does not disclose zero rewards');
+      check(!/buy|purchase|watch ad|pay/i.test(get('again-btn').textContent), 'second free replay requires an offer');
+      check(!get('again-btn').disabled && !get('again-btn').hidden, 'second free replay is not enabled');
+      const secondReplayTarget = get('again-btn').getBoundingClientRect();
+      check(secondReplayTarget.width >= 44 && secondReplayTarget.height >= 44, 'second free replay touch target smaller than 44 CSS pixels');
       await tapCenter(get('again-btn'));
       get('again-btn').click();
       check(!get('run-controls').hidden && get('energy').textContent === '0/5', 'second free replay unavailable');
