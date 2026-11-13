@@ -13,6 +13,9 @@ frame.onload = () => {
     const get = id => doc.getElementById(id);
     const check = (ok, message) => { if (!ok) throw Error(message); };
     const tapCenter = element => {
+      // Real mobile users can scroll to a control before tapping it.
+      // Test its visible, unobstructed center after scrolling, not its initial page position.
+      element.scrollIntoView({block: 'center', inline: 'nearest'});
       const rect = element.getBoundingClientRect();
       const x = rect.left + rect.width / 2;
       const y = rect.top + rect.height / 2;
