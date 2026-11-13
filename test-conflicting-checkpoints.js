@@ -18,5 +18,6 @@ run(cp(100,2),cp(250,5),cp(200,4),{credits:250,rev:5});
 run(cp(300,6),cp(200,4),cp(250,5),{credits:300,rev:6});
 run('{corrupt',cp(400,7),cp(500,8),{credits:500,rev:8});
 run('{corrupt',cp(600,9),'{corrupt',{credits:600,rev:9});
-run(cp(700,10),cp(600,9),cp(800,10),{credits:800,rev:10});
-console.log('PASS: primary, backup and journal conflicts choose highest verified revision');
+// A pending write at the same revision is not committed; retain the verified primary.
+run(cp(700,10),cp(600,9),cp(800,10),{credits:700,rev:10});
+console.log('PASS: primary, backup and journal conflicts choose highest revision and prefer committed primary on ties');
