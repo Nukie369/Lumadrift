@@ -35,4 +35,10 @@ assert.equal(r.repeated,false);assert.equal(f.state.atlas.duplicateStreak,0);
 f=fixture(['bloom','pearl','kite','lantern','key','crown'],6,0);
 r=f.draw();assert.equal(r.repeated,true);assert.equal(r.bonus,45);
 assert.equal(f.state.atlas.claimed.length,0);assert.equal(f.events[0][1].protectedDraw,false);
+// Completed collections must not advertise nonexistent new relics or an active pity guarantee.
+const atlasRender = source.slice(source.indexOf('  function renderAtlas(){'), source.indexOf('  function renderAtlas(){') + 2300);
+assert.match(atlasRender, /owned===allRelics\.length[\s\S]*?Atlas complete!/);
+assert.match(atlasRender, /Future eligible relic draws are duplicates worth 45 bonus shards/);
+assert.match(atlasRender, /there are no undiscovered relics left/);
+assert.match(atlasRender, /:.*Next draw:.*chance of a new relic/);
 console.log('PASS: production Atlas six-duplicate guarantee, threshold, reset, rewards and completed collection');
