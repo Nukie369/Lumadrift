@@ -27,7 +27,7 @@ frame.onload = () => {
       }
       const x = rect.left + rect.width / 2;
       const y = rect.top + rect.height / 2;
-      check(x >= 0 && y >= 0 && x < doc.documentElement.clientWidth && y < frame.contentWindow.innerHeight, 'practice tap target center is outside mobile viewport');
+      check(x >= 0 && y >= 0 && x < frame.contentWindow.innerWidth && y < frame.contentWindow.innerHeight, `practice tap target center outside mobile viewport: center=(${Math.round(x)},${Math.round(y)}), rect=(${Math.round(rect.left)},${Math.round(rect.top)},${Math.round(rect.width)},${Math.round(rect.height)}), viewport=${frame.contentWindow.innerWidth}x${frame.contentWindow.innerHeight}, rootScroll=${Math.round((doc.scrollingElement || doc.documentElement).scrollTop)}`);
       const hit = doc.elementFromPoint(x, y);
       check(hit === element || element.contains(hit), 'practice tap is intercepted by an overlay');
     };
