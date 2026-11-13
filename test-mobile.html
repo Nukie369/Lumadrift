@@ -15,7 +15,7 @@ frame.onload = async () => {
     const tapCenter = async element => {
       // Real mobile users can scroll to a control before tapping it.
       // Test its visible, unobstructed center after scrolling, not its initial page position.
-      element.scrollIntoView({block: 'center', inline: 'nearest'});
+      // The game enables smooth scrolling; a touch smoke test must wait for no animation.\n      // Instant scrolling makes the subsequent hit test deterministic.\n      doc.documentElement.style.scrollBehavior = 'auto';\n      element.scrollIntoView({behavior: 'instant', block: 'center', inline: 'nearest'});
       // In headless Chromium, a nested iframe can retain a separate scroll root.
       // Explicitly scroll that root if scrollIntoView left the control outside view.
       let rect = element.getBoundingClientRect();
