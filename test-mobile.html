@@ -16,7 +16,15 @@ frame.onload = () => {
       // Real mobile users can scroll to a control before tapping it.
       // Test its visible, unobstructed center after scrolling, not its initial page position.
       element.scrollIntoView({block: 'center', inline: 'nearest'});
-      const rect = element.getBoundingClientRect();
+      // In headless Chromium, a nested iframe can retain a separate scroll root.
+      // Explicitly scroll that root if scrollIntoView left the control outside view.
+      let rect = element.getBoundingClientRect();
+      const viewportHeight = frame.contentWindow.innerHeight;
+      if (rect.top < 0 || rect.bottom > viewportHeight) {
+        const root = doc.scrollingElement || doc.documentElement;
+        root.scrollTop += rect.top - Math.max(0, (viewportHeight - rect.height) / 2);
+        rect = element.getBoundingClientRect();
+      }
       const x = rect.left + rect.width / 2;
       const y = rect.top + rect.height / 2;
       check(x >= 0 && y >= 0 && x < doc.documentElement.clientWidth && y < frame.contentWindow.innerHeight, 'practice tap target center is outside mobile viewport');
