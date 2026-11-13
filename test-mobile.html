@@ -25,6 +25,13 @@ frame.onload = async () => {
         root.scrollTop += rect.top - Math.max(0, (viewportHeight - rect.height) / 2);
         rect = element.getBoundingClientRect();
       }
+      for (let parent = element.parentElement; parent && parent !== doc.documentElement; parent = parent.parentElement) {
+        const style = frame.contentWindow.getComputedStyle(parent);
+        if (!/(auto|scroll)/.test(style.overflowY) || parent.scrollHeight <= parent.clientHeight) continue;
+        const box = element.getBoundingClientRect(), panel = parent.getBoundingClientRect();
+        if (box.top < panel.top || box.bottom > panel.bottom)
+          parent.scrollTop += box.top - panel.top - Math.max(0, (parent.clientHeight - box.height) / 2);
+      }
       // Wait for Chromium to apply the iframe scroll before hit-testing.
       await new Promise(resolve => frame.contentWindow.requestAnimationFrame(() => resolve()));
       rect = element.getBoundingClientRect();
