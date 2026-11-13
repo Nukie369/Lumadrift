@@ -49,7 +49,9 @@ function report(trials = 10000, protection = 6) {
 if (require.main === module) {
   const protectedPacing = report();
   const unprotectedPacing = report(10000, Infinity);
-  assert(protectedPacing.both.p90 < unprotectedPacing.both.p90, 'Duplicate protection must reduce worst-tail completion time');
+  for (const set of ['skyward', 'deep', 'both']) {
+    assert(protectedPacing[set].p90 < unprotectedPacing[set].p90, `${set}: duplicate protection must reduce 90th-percentile completion time`);
+  }
   console.log(JSON.stringify({ protectedPacing, unprotectedPacing }, null, 2));
 }
 module.exports = { simulate, report };
