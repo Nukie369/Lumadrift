@@ -12,6 +12,17 @@ p=Path('luma-drift-standalone-v8.2.html')
 assert p.exists() and p.stat().st_size > 100000
 print('Standalone artifact:',p.stat().st_size,'bytes')
 PY
+node - <<'NODE'
+const assert = require('node:assert/strict');
+const { report } = require('./simulate-atlas');
+const a = report(10000), b = report(10000);
+assert.deepEqual(a, b, 'Atlas pacing simulation must be reproducible');
+for (const set of ['skyward', 'deep', 'both']) {
+  assert(a[set].median >= 1 && a[set].p90 >= a[set].median);
+  assert(a[set].p90 <= 40, `${set} exceeds the 40-flight collection pacing guardrail`);
+}
+console.log('Atlas pacing simulation verified:', JSON.stringify(a));
+NODE
 count=0
 failures=0
 for test in test-*.js; do
