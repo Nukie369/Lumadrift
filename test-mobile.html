@@ -97,6 +97,7 @@ frame.onload = () => {
       }
       check(get('energy').textContent === '0/5', 'standard flights did not consume remaining fuel');
       check(get('again-btn').textContent.includes('PRACTICE FREE'), 'zero-fuel results did not offer practice');
+      check(!/buy|purchase|watch ad|pay/i.test(get('again-btn').textContent), 'zero-fuel replay presents a purchase or ad as required');
       check(get('again-btn').textContent.includes('NO REWARDS'), 'free practice reward disclosure missing');
       check(!get('again-btn').disabled && !get('again-btn').hidden, 'free practice not directly tappable');
       const replayTarget = get('again-btn').getBoundingClientRect();
