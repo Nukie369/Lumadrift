@@ -7,12 +7,12 @@ let stage = 0;
 let expectedCredits = null;
 let expectedMissionBadge = null;
 let expectedMissionHidden = null;
-frame.onload = () => {
+frame.onload = async () => {
   try {
     const doc = frame.contentDocument;
     const get = id => doc.getElementById(id);
     const check = (ok, message) => { if (!ok) throw Error(message); };
-    const tapCenter = element => {
+    const tapCenter = async element => {
       // Real mobile users can scroll to a control before tapping it.
       // Test its visible, unobstructed center after scrolling, not its initial page position.
       element.scrollIntoView({block: 'center', inline: 'nearest'});
@@ -25,6 +25,9 @@ frame.onload = () => {
         root.scrollTop += rect.top - Math.max(0, (viewportHeight - rect.height) / 2);
         rect = element.getBoundingClientRect();
       }
+      // Wait for Chromium to apply the iframe scroll before hit-testing.
+      await new Promise(resolve => frame.contentWindow.requestAnimationFrame(() => resolve()));
+      rect = element.getBoundingClientRect();
       const x = rect.left + rect.width / 2;
       const y = rect.top + rect.height / 2;
       check(x >= 0 && y >= 0 && x < frame.contentWindow.innerWidth && y < frame.contentWindow.innerHeight, `practice tap target center outside mobile viewport: center=(${Math.round(x)},${Math.round(y)}), rect=(${Math.round(rect.left)},${Math.round(rect.top)},${Math.round(rect.width)},${Math.round(rect.height)}), viewport=${frame.contentWindow.innerWidth}x${frame.contentWindow.innerHeight}, rootScroll=${Math.round((doc.scrollingElement || doc.documentElement).scrollTop)}`);
@@ -45,7 +48,7 @@ frame.onload = () => {
       try {
         clock.now = () => originalNow() + 1200001;
         check(!get('again-btn').disabled && !get('again-btn').hidden, 'recharged replay button unavailable');
-        tapCenter(get('again-btn'));
+        await tapCenter(get('again-btn'));
         get('again-btn').click();
         check(!get('run-controls').hidden, 'recharged results replay did not launch');
         check(get('energy').textContent === '0/5', 'recharged flight did not spend its one recovered fuel');
@@ -106,7 +109,7 @@ frame.onload = () => {
       const creditsBeforePractice=get('credits').textContent;
       const missionBadgeBeforePractice=get('mission-badge').textContent;
       const missionBadgeHiddenBeforePractice=get('mission-badge').hidden;
-      tapCenter(get('again-btn'));
+      await tapCenter(get('again-btn'));
       get('again-btn').click();
       check(!get('run-controls').hidden, 'zero-fuel replay did not launch practice');
       check(get('energy').textContent === '0/5', 'practice consumed fuel');
@@ -117,7 +120,7 @@ frame.onload = () => {
       check(get('mission-badge').textContent === missionBadgeBeforePractice && get('mission-badge').hidden === missionBadgeHiddenBeforePractice, 'practice changed mission reward availability');
       // A second replay must remain freely playable rather than trapping an empty-tank player.
       check(get('again-btn').textContent.includes('PRACTICE FREE'), 'practice results did not offer another free replay');
-      tapCenter(get('again-btn'));
+      await tapCenter(get('again-btn'));
       get('again-btn').click();
       check(!get('run-controls').hidden && get('energy').textContent === '0/5', 'second free replay unavailable');
       get('routes').firstElementChild.click();
@@ -152,7 +155,7 @@ frame.onload = () => {
     check(practiceTarget.width >= 44 && practiceTarget.height >= 44, 'free practice entry touch target smaller than 44 CSS pixels');
     // A real touch browser performs hit-testing before dispatching a tap. A large
     // bounding box alone is insufficient if another overlay intercepts the touch.
-    tapCenter(practiceButton);
+    await tapCenter(practiceButton);
     practiceButton.click();
     check(!get('run-controls').hidden && get('energy').textContent === '5/5', 'practice launch');
     const practiceRoute = get('routes').firstElementChild;
