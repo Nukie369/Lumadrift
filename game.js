@@ -371,7 +371,9 @@
     const missingWeight=allRelics.reduce((sum,relic)=>sum+(state.atlas.discovered.includes(relic.id)?0:relic.weight),0);
     const protectedDraw=state.atlas.duplicateStreak>=6&&owned<allRelics.length;
     const newChance=(protectedDraw?100:missingWeight/totalWeight*100).toFixed(1).replace(/\.0$/,'');
-    $('atlas-subtitle').textContent=`Recover a relic when you safely bank after at least two jumps. ${owned} unique relic${owned===1?'':'s'} collected. Next draw: ${newChance}% chance of a new relic. ${protectedDraw?'Duplicate protection active: your next draw is guaranteed new.':`Duplicate streak ${state.atlas.duplicateStreak}/6; after six consecutive duplicates, the next draw is guaranteed new.`} Normal draws use independent weighted odds.`;
+    $('atlas-subtitle').textContent=owned===allRelics.length
+      ?`All ${owned} unique relics discovered. Atlas complete! Future eligible relic draws are duplicates worth 45 bonus shards; there are no undiscovered relics left.`
+      :`Recover a relic when you safely bank after at least two jumps. ${owned} unique relic${owned===1?'':'s'} collected. Next draw: ${newChance}% chance of a new relic. ${protectedDraw?'Duplicate protection active: your next draw is guaranteed new.':`Duplicate streak ${state.atlas.duplicateStreak}/6; after six consecutive duplicates, the next draw is guaranteed new.`} Normal draws use independent weighted odds.`;
     const gallery=$('atlas-gallery');gallery.replaceChildren();
     for(const set of atlasSets){
       const collected=set.relics.filter(r=>state.atlas.discovered.includes(r.id)).length;
