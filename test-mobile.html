@@ -12,6 +12,15 @@ frame.onload = () => {
     const doc = frame.contentDocument;
     const get = id => doc.getElementById(id);
     const check = (ok, message) => { if (!ok) throw Error(message); };
+    const tapCenter = element => {
+      const rect = element.getBoundingClientRect();
+      const x = rect.left + rect.width / 2;
+      const y = rect.top + rect.height / 2;
+      check(x >= 0 && y >= 0 && x < doc.documentElement.clientWidth && y < frame.contentWindow.innerHeight, 'practice tap target center is outside mobile viewport');
+      const hit = doc.elementFromPoint(x, y);
+      check(hit === element || element.contains(hit), 'practice tap is intercepted by an overlay');
+    };
+
     if (stage === 3) {
       check(get('credits').textContent === expectedCredits, 'repeated reload duplicated banked cargo or mission rewards');
       check(get('atlas-total').textContent === '1 / 6 DISCOVERED', 'repeated reload changed banked relic collection');
@@ -129,14 +138,6 @@ frame.onload = () => {
     check(practiceTarget.width >= 44 && practiceTarget.height >= 44, 'free practice entry touch target smaller than 44 CSS pixels');
     // A real touch browser performs hit-testing before dispatching a tap. A large
     // bounding box alone is insufficient if another overlay intercepts the touch.
-    const tapCenter = element => {
-      const rect = element.getBoundingClientRect();
-      const x = rect.left + rect.width / 2;
-      const y = rect.top + rect.height / 2;
-      check(x >= 0 && y >= 0 && x < doc.documentElement.clientWidth && y < frame.contentWindow.innerHeight, 'practice tap target center is outside mobile viewport');
-      const hit = doc.elementFromPoint(x, y);
-      check(hit === element || element.contains(hit), 'practice tap is intercepted by an overlay');
-    };
     tapCenter(practiceButton);
     practiceButton.click();
     check(!get('run-controls').hidden && get('energy').textContent === '5/5', 'practice launch');
