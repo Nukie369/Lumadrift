@@ -10,17 +10,17 @@ const relics = [
   { id: 'key', set: 'deep', weight: 13 },
   { id: 'crown', set: 'deep', weight: 7 }
 ];
-function simulate(seed) {
+function simulate(seed, protection = 6) {
   let rng = seed >>> 0;
   const random = () => { rng = (Math.imul(1664525, rng) + 1013904223) >>> 0; return rng / 4294967296; };
   const discovered = new Set(), completion = {};
   let duplicates = 0;
   for (let flight = 1; flight <= 10000; flight++) {
     const missing = relics.filter(r => !discovered.has(r.id));
-    const pool = duplicates >= 6 && missing.length ? missing : relics;
+    const pool = duplicates >= protection && missing.length ? missing : relics;
     let roll = random() * pool.reduce((sum, r) => sum + r.weight, 0);
     const relic = pool.find(r => (roll -= r.weight) < 0) || pool[pool.length - 1];
-    if (discovered.has(relic.id)) duplicates = Math.min(6, duplicates + 1);
+    if (discovered.has(relic.id)) duplicates = Math.min(protection, duplicates + 1);
     else { discovered.add(relic.id); duplicates = 0; }
     for (const set of ['skyward', 'deep'])
       if (!completion[set] && relics.filter(r => r.set === set).every(r => discovered.has(r.id))) completion[set] = flight;
@@ -29,11 +29,11 @@ function simulate(seed) {
   throw new Error('Collection failed to finish within 10,000 eligible flights');
 }
 function percentile(sorted, p) { return sorted[Math.ceil(sorted.length * p) - 1]; }
-function report(trials = 10000) {
+function report(trials = 10000, protection = 6) {
   assert(Number.isInteger(trials) && trials > 0);
   const samples = { skyward: [], deep: [], both: [] };
   for (let i = 1; i <= trials; i++) {
-    const result = simulate(i);
+    const result = simulate(i, protection);
     samples.skyward.push(result.skyward);
     samples.deep.push(result.deep);
     samples.both.push(Math.max(result.skyward, result.deep));
@@ -46,5 +46,10 @@ function report(trials = 10000) {
   }
   return summary;
 }
-if (require.main === module) console.log(JSON.stringify(report(), null, 2));
+if (require.main === module) {
+  const protectedPacing = report();
+  const unprotectedPacing = report(10000, Infinity);
+  assert(protectedPacing.both.p90 < unprotectedPacing.both.p90, 'Duplicate protection must reduce worst-tail completion time');
+  console.log(JSON.stringify({ protectedPacing, unprotectedPacing }, null, 2));
+}
 module.exports = { simulate, report };
