@@ -57,7 +57,9 @@ frame.onload = async () => {
       const creditsBeforeRecharge = Number(get('credits').textContent.replace(/,/g, ''));
       try {
         clock.now = () => originalNow() + 1200001;
-        doc.querySelector('[data-tab="flight"]').click();\n        check(get('end-controls').getBoundingClientRect().width > 0, 'recharged results panel hidden behind another tab');\n        check(!get('again-btn').disabled && !get('again-btn').hidden, 'recharged replay button unavailable');
+        doc.querySelector('[data-tab="flight"]').click();
+        check(get('end-controls').getBoundingClientRect().width > 0, 'recharged results panel hidden behind another tab');
+        check(!get('again-btn').disabled && !get('again-btn').hidden, 'recharged replay button unavailable');
         await tapCenter(get('again-btn'));
         get('again-btn').click();
         check(!get('run-controls').hidden, 'recharged results replay did not launch');
@@ -101,7 +103,10 @@ frame.onload = async () => {
       check(get('mission-badge').hidden, 'claimed mission reappeared after reload');
       check(get('energy').textContent === '3/5', 'fuel did not preserve two standard flights and one free practice flight after reload');
       Object.defineProperty(frame.contentWindow.crypto, 'getRandomValues', {configurable:true,value:a=>{a.fill(0xffffffff);return a;}});
-      // Mission claiming leaves the Missions tab active; return to Explore before touch hit-testing results.\n      doc.querySelector('[data-tab="flight"]').click();\n      check(get('end-controls').getBoundingClientRect().width > 0, 'results panel not visible after returning to Explore');\n      // Exhaust the remaining three fuel units through normal flights, then replay for free.
+      // Mission claiming leaves the Missions tab active; return to Explore before touch hit-testing results.
+      doc.querySelector('[data-tab="flight"]').click();
+      check(get('end-controls').getBoundingClientRect().width > 0, 'results panel not visible after returning to Explore');
+      // Exhaust the remaining three fuel units through normal flights, then replay for free.
       for(let i=0;i<3;i++){
         get('again-btn').click();
         check(!get('run-controls').hidden, 'standard flight unavailable with remaining fuel');
