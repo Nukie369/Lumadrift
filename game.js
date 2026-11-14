@@ -590,7 +590,7 @@
     });
     banner.append(heading,message,restart);document.body.append(banner);
   }else if(pendingStorageWarning)notify(pendingStorageWarning);
-  setInterval(updateDay,60000);
+  // Keep the results-screen replay choice responsive when fuel recharges.\n  setInterval(updateDay,15000);
   document.addEventListener('visibilitychange',()=>{if(!document.hidden)updateDay();});
   if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol))navigator.serviceWorker.register('./sw.js').catch(()=>{});
 })();
