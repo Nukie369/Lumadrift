@@ -56,7 +56,11 @@ frame.onload = async () => {
       check(!get('practice-btn').disabled && !get('practice-btn').hidden, 'practice entry unavailable after repeated reload');
       get('practice-btn').click();
       check(!get('run-controls').hidden && get('energy').textContent === '0/5', 'post-reload practice did not start');
+      // Bank is disabled until cargo exists. Force a safe route so this test
+      // validates replay/recharge rather than failing on a random storm.
+      Object.defineProperty(frame.contentWindow.crypto, 'getRandomValues', {configurable:true,value:a=>{a.fill(0xffffffff);return a;}});
       get('routes').firstElementChild.click();
+      check(Number(get('cargo').textContent.replace(/,/g, '')) > 0 && !get('bank-btn').disabled, 'post-reload practice did not collect simulated cargo');
       get('bank-btn').click();
       check(get('end-earned').textContent === '0' && get('credits').textContent === expectedCredits, 'post-reload practice changed wallet');
       check(get('again-btn').getBoundingClientRect().width >= 44, 'practice results replay button not visible before recharge');
