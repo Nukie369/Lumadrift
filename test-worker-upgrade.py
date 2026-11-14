@@ -72,13 +72,20 @@ def run(browser, temp):
               const reg = await navigator.serviceWorker.getRegistration('/game/');
               return reg?.active?.state === 'activated' && !reg.waiting && !reg.installing;
             }""")
-            # Activation and controller handoff can race with a new tab's first navigation.
-            # Reopen once if that navigation was served by the retiring worker.
+            # Wait for the new worker to control a fresh navigation. An active
+            # registration alone does not guarantee that the first tab uses it.
             page = context.new_page()
-            page.goto(origin + '/game/')
-            if page.locator('body').get_attribute('data-release') != target:
-                page.reload()
-            assert page.locator('body').get_attribute('data-release') == target, target
+            observed = None
+            for attempt in range(4):
+                if attempt:
+                    page.reload()
+                else:
+                    page.goto(origin + '/game/')
+                observed = page.locator('body').get_attribute('data-release')
+                if observed == target:
+                    break
+                page.wait_for_timeout(250)
+            assert observed == target, f'Expected release {target}; got {observed} after 4 navigations'
             assert page.locator('#credits').inner_text() == credits, 'Saved reward lost on upgrade'
             return page
 
