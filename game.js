@@ -593,5 +593,8 @@
   // Keep the results-screen replay choice responsive when fuel recharges.
   setInterval(updateDay,15000);
   document.addEventListener('visibilitychange',()=>{if(!document.hidden)updateDay();});
+  // Mobile browsers can restore a cached page without firing visibilitychange.
+  window.addEventListener('pageshow',event=>{if(event.persisted)updateDay();});
+  window.addEventListener('focus',updateDay);
   if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol))navigator.serviceWorker.register('./sw.js').catch(()=>{});
 })();
