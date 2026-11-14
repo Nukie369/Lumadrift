@@ -113,11 +113,17 @@ frame.onload = async () => {
       check(get('mission-badge').hidden, 'claimed mission reappeared after reload');
       check(get('energy').textContent === '3/5', 'fuel did not preserve two standard flights and one free practice flight after reload');
       Object.defineProperty(frame.contentWindow.crypto, 'getRandomValues', {configurable:true,value:a=>{a.fill(0xffffffff);return a;}});
-      // Mission claiming leaves the Missions tab active; return to Explore before touch hit-testing results.
+      // Reload restores saved progress, not the transient results screen.
+      // Start the first remaining-fuel flight from Explore, then use Fly Again.
       doc.querySelector('[data-tab="flight"]').click();
-      check(get('end-controls').getBoundingClientRect().width > 0, 'results panel not visible after returning to Explore');
-      // Exhaust the remaining three fuel units through normal flights, then replay for free.
-      for(let i=0;i<3;i++){
+      check(!get('launch-btn').disabled && !get('launch-btn').hidden, 'standard launch unavailable after reload');
+      get('launch-btn').click();
+      check(!get('run-controls').hidden, 'standard launch did not start a flight after reload');
+      get('routes').firstElementChild.click();
+      get('bank-btn').click();
+      check(get('end-controls').getBoundingClientRect().width > 0, 'results panel absent after banking a fresh flight');
+      // Exhaust the other two fuel units through normal results-screen replays.
+      for(let i=0;i<2;i++){
         get('again-btn').click();
         check(!get('run-controls').hidden, 'standard flight unavailable with remaining fuel');
         get('routes').firstElementChild.click();
