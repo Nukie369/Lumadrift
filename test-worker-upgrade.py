@@ -72,7 +72,13 @@ def run(browser, temp):
               const reg = await navigator.serviceWorker.getRegistration('/game/');
               return reg?.active?.state === 'activated' && !reg.waiting && !reg.installing;
             }""")
-            page = open_game(target)
+            # Activation and controller handoff can race with a new tab's first navigation.
+            # Reopen once if that navigation was served by the retiring worker.
+            page = context.new_page()
+            page.goto(origin + '/game/')
+            if page.locator('body').get_attribute('data-release') != target:
+                page.reload()
+            assert page.locator('body').get_attribute('data-release') == target, target
             assert page.locator('#credits').inner_text() == credits, 'Saved reward lost on upgrade'
             return page
 
