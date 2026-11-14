@@ -63,6 +63,7 @@ frame.onload = async () => {
       check(Number(get('cargo').textContent.replace(/,/g, '')) > 0 && !get('bank-btn').disabled, 'post-reload practice did not collect simulated cargo');
       get('bank-btn').click();
       check(get('end-earned').textContent === '0' && get('credits').textContent === expectedCredits, 'post-reload practice changed wallet');
+      check(!get('end-controls').hidden && get('end-controls').getBoundingClientRect().width > 0, `practice results panel not visible before recharge: endHidden=${get('end-controls').hidden}, runHidden=${get('run-controls').hidden}, activeTab=${doc.querySelector('.nav-item.active')?.dataset.tab || 'none'}, bankDisabled=${get('bank-btn').disabled}, cargo=${get('cargo').textContent}`);
       check(get('again-btn').getBoundingClientRect().width >= 44, 'practice results replay button not visible before recharge');
       // Simulate a 20-minute recharge while the results screen stays open.
       // The next replay must be a normal reward-earning flight, not free Practice.
