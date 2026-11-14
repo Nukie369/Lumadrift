@@ -50,6 +50,16 @@ frame.onload = async () => {
       check(get('atlas-total').textContent === '1 / 6 DISCOVERED', 'repeated reload changed banked relic collection');
       check(get('energy').textContent === '0/5', 'repeated reload changed fuel');
       check(get('mission-badge').textContent === expectedMissionBadge && get('mission-badge').hidden === expectedMissionHidden, 'repeated reload changed mission state');
+      // Reload restores banked state, not an active results overlay. Open a fresh
+      // zero-fuel Practice flight and bank it to establish a visible results screen.
+      doc.querySelector('[data-tab="flight"]').click();
+      check(!get('practice-btn').disabled && !get('practice-btn').hidden, 'practice entry unavailable after repeated reload');
+      get('practice-btn').click();
+      check(!get('run-controls').hidden && get('energy').textContent === '0/5', 'post-reload practice did not start');
+      get('routes').firstElementChild.click();
+      get('bank-btn').click();
+      check(get('end-earned').textContent === '0' && get('credits').textContent === expectedCredits, 'post-reload practice changed wallet');
+      check(get('again-btn').getBoundingClientRect().width >= 44, 'practice results replay button not visible before recharge');
       // Simulate a 20-minute recharge while the results screen stays open.
       // The next replay must be a normal reward-earning flight, not free Practice.
       const clock = frame.contentWindow.Date;
