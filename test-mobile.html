@@ -153,6 +153,7 @@ frame.onload = async () => {
       get('bank-btn').click();
       check(get('end-earned').textContent === '0', 'practice granted rewards');
       check(get('credits').textContent === creditsBeforePractice, 'practice changed wallet');
+      check(get('atlas-total').textContent === '1 / 6 DISCOVERED', 'first free replay changed banked relic collection');
       check(get('mission-badge').textContent === missionBadgeBeforePractice && get('mission-badge').hidden === missionBadgeHiddenBeforePractice, 'practice changed mission reward availability');
       // A second replay must remain freely playable rather than trapping an empty-tank player.
       check(get('again-btn').textContent.includes('PRACTICE FREE'), 'practice results did not offer another free replay');
@@ -168,6 +169,7 @@ frame.onload = async () => {
       get('bank-btn').click();
       check(get('end-earned').textContent === '0', 'second practice granted rewards');
       check(get('credits').textContent === creditsBeforePractice, 'second practice changed wallet');
+      check(get('atlas-total').textContent === '1 / 6 DISCOVERED', 'second free replay changed banked relic collection');
       check(get('mission-badge').textContent === missionBadgeBeforePractice && get('mission-badge').hidden === missionBadgeHiddenBeforePractice, 'second practice changed mission reward availability');
       expectedCredits = creditsBeforePractice;
       expectedMissionBadge = missionBadgeBeforePractice;
