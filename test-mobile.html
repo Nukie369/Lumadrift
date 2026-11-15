@@ -78,6 +78,9 @@ frame.onload = async () => {
         // Selecting the already-active tab alone does not refresh the fuel label.
         frame.contentWindow.dispatchEvent(new frame.contentWindow.Event('focus'));
         check(get('energy').textContent === '1/5', 'focus did not restore one elapsed fuel');
+        // Repeated resume/focus notifications must not grant fuel twice.
+        frame.contentWindow.dispatchEvent(new frame.contentWindow.Event('focus'));
+        check(get('energy').textContent === '1/5', 'repeated focus granted duplicate fuel');
         check(get('again-btn').dataset.replayMode === 'standard' && get('again-btn').textContent.includes('1 FUEL'), 'recharged results did not display standard replay');
         doc.querySelector('[data-tab="flight"]').click();
         check(get('end-controls').getBoundingClientRect().width > 0, 'recharged results panel hidden behind another tab');
