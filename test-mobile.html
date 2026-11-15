@@ -156,6 +156,7 @@ frame.onload = async () => {
       get('routes').firstElementChild.click();
       get('bank-btn').click();
       check(get('end-earned').textContent === '0', 'practice granted rewards');
+      check(get('scene-message').textContent.includes('NO REWARDS'), 'practice completion scene does not disclose zero rewards');
       check(get('credits').textContent === creditsBeforePractice, 'practice changed wallet');
       check(get('level').textContent === levelBeforePractice, 'practice changed pilot level');
       check(get('atlas-total').textContent === '1 / 6 DISCOVERED', 'first free replay changed banked relic collection');
@@ -173,6 +174,7 @@ frame.onload = async () => {
       get('routes').firstElementChild.click();
       get('bank-btn').click();
       check(get('end-earned').textContent === '0', 'second practice granted rewards');
+      check(get('scene-message').textContent.includes('NO REWARDS'), 'second practice completion scene does not disclose zero rewards');
       check(get('credits').textContent === creditsBeforePractice, 'second practice changed wallet');
       check(get('level').textContent === levelBeforePractice, 'second practice changed pilot level');
       check(get('atlas-total').textContent === '1 / 6 DISCOVERED', 'second free replay changed banked relic collection');
