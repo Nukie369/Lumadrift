@@ -160,6 +160,7 @@ frame.onload = async () => {
       await tapCenter(get('again-btn'));
       get('again-btn').click();
       check(!get('run-controls').hidden, 'zero-fuel replay did not launch practice');
+      check(get('run-counter').textContent.includes('PRACTICE') && get('run-counter').textContent.includes('NO REWARDS'), 'zero-fuel active flight header implies reward-earning expedition');
       check(get('energy').textContent === '0/5', 'practice consumed fuel');
       get('routes').firstElementChild.click();
       get('bank-btn').click();
