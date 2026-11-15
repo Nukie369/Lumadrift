@@ -161,6 +161,7 @@ frame.onload = async () => {
       get('again-btn').click();
       check(!get('run-controls').hidden, 'zero-fuel replay did not launch practice');
       check(get('run-counter').textContent.includes('PRACTICE') && get('run-counter').textContent.includes('NO REWARDS'), 'zero-fuel active flight header implies reward-earning expedition');
+      check(get('scene-label').textContent === 'PRACTICE FLIGHT / NO REWARDS', 'zero-fuel flight scene heading implies a reward expedition');
       check(get('energy').textContent === '0/5', 'practice consumed fuel');
       get('routes').firstElementChild.click();
       get('bank-btn').click();
@@ -180,6 +181,7 @@ frame.onload = async () => {
       await tapCenter(get('again-btn'));
       get('again-btn').click();
       check(!get('run-controls').hidden && get('energy').textContent === '0/5', 'second free replay unavailable');
+      check(get('scene-label').textContent === 'PRACTICE FLIGHT / NO REWARDS', 'second practice scene heading lost its no-rewards disclosure');
       get('routes').firstElementChild.click();
       get('bank-btn').click();
       check(get('end-earned').textContent === '0', 'second practice granted rewards');
@@ -219,6 +221,7 @@ frame.onload = async () => {
     await tapCenter(practiceButton);
     practiceButton.click();
     check(!get('run-controls').hidden && get('energy').textContent === '5/5', 'practice launch');
+    check(get('scene-label').textContent === 'PRACTICE FLIGHT / NO REWARDS', 'initial practice scene heading missing no-rewards disclosure');
     const practiceRoute = get('routes').firstElementChild;
     check(practiceRoute.textContent.includes('simulation only') && practiceRoute.textContent.includes('no rewards'), 'practice route visually implies earnable cargo');
     check(practiceRoute.getAttribute('aria-label').includes('simulated') && practiceRoute.getAttribute('aria-label').includes('no rewards awarded'), 'practice route accessibility label implies earnable cargo');
