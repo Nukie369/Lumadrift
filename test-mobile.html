@@ -5,6 +5,7 @@ const frame = document.querySelector('iframe');
 const result = document.querySelector('output');
 let stage = 0;
 let expectedCredits = null;
+let expectedLevel = null;
 let expectedMissionBadge = null;
 let expectedMissionHidden = null;
 frame.onload = async () => {
@@ -47,6 +48,7 @@ frame.onload = async () => {
 
     if (stage === 3) {
       check(get('credits').textContent === expectedCredits, 'repeated reload duplicated banked cargo or mission rewards');
+      check(get('level').textContent === expectedLevel, 'repeated reload changed pilot level');
       check(get('atlas-total').textContent === '1 / 6 DISCOVERED', 'repeated reload changed banked relic collection');
       check(get('energy').textContent === '0/5', 'repeated reload changed fuel');
       check(get('mission-badge').textContent === expectedMissionBadge && get('mission-badge').hidden === expectedMissionHidden, 'repeated reload changed mission state');
@@ -96,6 +98,7 @@ frame.onload = async () => {
     }
     if (stage === 2) {
       check(get('credits').textContent === expectedCredits, 'free practice changed wallet after reload');
+      check(get('level').textContent === expectedLevel, 'free practice changed pilot level after reload');
       check(get('atlas-total').textContent === '1 / 6 DISCOVERED', 'free practice or reload changed banked relic collection');
       check(get('energy').textContent === '0/5', 'free practice changed fuel after reload');
       check(get('mission-badge').textContent === expectedMissionBadge && get('mission-badge').hidden === expectedMissionHidden, 'free practice changed mission badge after reload');
@@ -143,6 +146,7 @@ frame.onload = async () => {
       check(replayTarget.width >= 44 && replayTarget.height >= 44, 'zero-fuel practice touch target smaller than 44 CSS pixels');
       check(!get('end-earned').hidden, 'results disappeared before replay was selected');
       const creditsBeforePractice=get('credits').textContent;
+      const levelBeforePractice=get('level').textContent;
       const missionBadgeBeforePractice=get('mission-badge').textContent;
       const missionBadgeHiddenBeforePractice=get('mission-badge').hidden;
       await tapCenter(get('again-btn'));
@@ -153,6 +157,7 @@ frame.onload = async () => {
       get('bank-btn').click();
       check(get('end-earned').textContent === '0', 'practice granted rewards');
       check(get('credits').textContent === creditsBeforePractice, 'practice changed wallet');
+      check(get('level').textContent === levelBeforePractice, 'practice changed pilot level');
       check(get('atlas-total').textContent === '1 / 6 DISCOVERED', 'first free replay changed banked relic collection');
       check(get('mission-badge').textContent === missionBadgeBeforePractice && get('mission-badge').hidden === missionBadgeHiddenBeforePractice, 'practice changed mission reward availability');
       // A second replay must remain freely playable rather than trapping an empty-tank player.
@@ -169,9 +174,11 @@ frame.onload = async () => {
       get('bank-btn').click();
       check(get('end-earned').textContent === '0', 'second practice granted rewards');
       check(get('credits').textContent === creditsBeforePractice, 'second practice changed wallet');
+      check(get('level').textContent === levelBeforePractice, 'second practice changed pilot level');
       check(get('atlas-total').textContent === '1 / 6 DISCOVERED', 'second free replay changed banked relic collection');
       check(get('mission-badge').textContent === missionBadgeBeforePractice && get('mission-badge').hidden === missionBadgeHiddenBeforePractice, 'second practice changed mission reward availability');
       expectedCredits = creditsBeforePractice;
+      expectedLevel = levelBeforePractice;
       expectedMissionBadge = missionBadgeBeforePractice;
       expectedMissionHidden = missionBadgeHiddenBeforePractice;
       stage = 2;
