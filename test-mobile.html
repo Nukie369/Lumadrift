@@ -4,10 +4,14 @@
 const frame = document.querySelector('iframe');
 const result = document.querySelector('output');
 // Fail visibly instead of leaving CI waiting indefinitely when a browser callback stalls.
-const smokeTimeout = setTimeout(() => {
-  if (result.textContent === 'RUNNING') result.textContent = 'FAIL: mobile smoke test timed out after 30 seconds';
-}, 30000);
 let stage = 0;
+let timedOut = false;
+const smokeTimeout = setTimeout(() => {
+  if (result.textContent === 'RUNNING') {
+    timedOut = true;
+    result.textContent = `FAIL: mobile smoke test timed out after 30 seconds at stage ${stage}`;
+  }
+}, 30000);
 let expectedCredits = null;
 let expectedLevel = null;
 let expectedMissionBadge = null;
@@ -16,7 +20,7 @@ frame.onload = async () => {
   try {
     const doc = frame.contentDocument;
     const get = id => doc.getElementById(id);
-    const check = (ok, message) => { if (!ok) throw Error(message); };
+    const check = (ok, message) => { if (timedOut) throw Error(`mobile smoke test exceeded timeout at stage ${stage}`); if (!ok) throw Error(message); };
     const tapCenter = async element => {
       // Real mobile users can scroll to a control before tapping it.
       // Test its visible, unobstructed center after scrolling, not its initial page position.
@@ -110,7 +114,7 @@ frame.onload = async () => {
         clock.now = originalNow;
       }
       clearTimeout(smokeTimeout);
-      result.textContent = 'PASS: mobile flights, mission claim, zero-fuel replay, reload persistence and recharged standard replay';
+      if (!timedOut) result.textContent = 'PASS: mobile flights, mission claim, zero-fuel replay, reload persistence and recharged standard replay';
       return;
     }
     if (stage === 2) {
@@ -292,7 +296,7 @@ frame.onload = async () => {
     check(Number(expectedCredits) > 150, 'mission reward not credited');
     stage = 1;
     frame.src = 'luma-drift-standalone-v8.2.html?reload=1';
-  } catch (err) { clearTimeout(smokeTimeout); result.textContent = 'FAIL: ' + err.message; }
+  } catch (err) { clearTimeout(smokeTimeout); if (!timedOut) result.textContent = 'FAIL: ' + err.message; }
 };
 frame.src = 'luma-drift-standalone-v8.2.html';
 </script>
