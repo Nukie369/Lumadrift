@@ -39,8 +39,9 @@ frame.onload = async () => {
       // A target can be unobstructed yet too small for a reliable finger tap.
       const size = element.getBoundingClientRect();
       check(size.width >= 44 && size.height >= 44, `practice touch target too small: #${element.id || element.tagName.toLowerCase()} ${Math.round(size.width)}x${Math.round(size.height)} CSS pixels`);
-      // Wait for Chromium to apply the iframe scroll before hit-testing.
-      await new Promise(resolve => frame.contentWindow.requestAnimationFrame(() => resolve()));
+      // getBoundingClientRect and elementFromPoint force synchronous layout after scrolling.
+      // Avoid awaiting requestAnimationFrame in a background iframe: headless Chrome may
+      // throttle or suspend its frames, leaving the smoke test stuck on RUNNING.
       rect = element.getBoundingClientRect();
       const x = rect.left + rect.width / 2;
       const y = rect.top + rect.height / 2;
