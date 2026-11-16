@@ -3,6 +3,10 @@
 <script>
 const frame = document.querySelector('iframe');
 const result = document.querySelector('output');
+// Fail visibly instead of leaving CI waiting indefinitely when a browser callback stalls.
+const smokeTimeout = setTimeout(() => {
+  if (result.textContent === 'RUNNING') result.textContent = 'FAIL: mobile smoke test timed out after 30 seconds';
+}, 30000);
 let stage = 0;
 let expectedCredits = null;
 let expectedLevel = null;
@@ -105,6 +109,7 @@ frame.onload = async () => {
       } finally {
         clock.now = originalNow;
       }
+      clearTimeout(smokeTimeout);
       result.textContent = 'PASS: mobile flights, mission claim, zero-fuel replay, reload persistence and recharged standard replay';
       return;
     }
@@ -287,7 +292,7 @@ frame.onload = async () => {
     check(Number(expectedCredits) > 150, 'mission reward not credited');
     stage = 1;
     frame.src = 'luma-drift-standalone-v8.2.html?reload=1';
-  } catch (err) { result.textContent = 'FAIL: ' + err.message; }
+  } catch (err) { clearTimeout(smokeTimeout); result.textContent = 'FAIL: ' + err.message; }
 };
 frame.src = 'luma-drift-standalone-v8.2.html';
 </script>
