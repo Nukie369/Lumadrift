@@ -37,7 +37,7 @@
       const flight=JSON.parse(raw);
       if(!flight||typeof flight!=='object'||typeof flight.started!=='number'||!Number.isFinite(flight.started))return null;
       if(flight.started>Date.now()+60000||Date.now()-flight.started>7*86400000)return null;
-      return flight.practice===true?'Your practice flight ended when the game closed. No virtual rewards were affected.':'Your expedition ended when the game closed. Unbanked virtual cargo was not awarded. Fuel and completed mission progress remain saved.';
+      return {practice:flight.practice===true,message:flight.practice===true?'Your practice flight ended when the game closed. No virtual rewards were affected.':'Your expedition ended when the game closed. Unbanked virtual cargo was not awarded. Fuel and completed mission progress remain saved.'};
     }catch{return null;}
   }
   let run=null, toastTimeout;
@@ -565,7 +565,7 @@
     await importBackup(file);
   });
   const interrupted=interruptedFlight();
-  if(interrupted){state.end={title:'Flight interrupted',description:interrupted,icon:'🛟',earned:0,relic:null};}
+  if(interrupted){state.end={title:'Flight interrupted',description:interrupted.message,icon:'🛟',earned:0,relic:null,practice:interrupted.practice};}
   track('open');ensureDay();renderHeader();renderShop();renderColony();renderAtlas();renderMissions();renderRewards();updateScene();
   if(recoveryBlocked){
     const banner=document.createElement('section');
