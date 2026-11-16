@@ -36,6 +36,9 @@ frame.onload = async () => {
         if (box.top < panel.top || box.bottom > panel.bottom)
           parent.scrollTop += box.top - panel.top - Math.max(0, (parent.clientHeight - box.height) / 2);
       }
+      // A target can be unobstructed yet too small for a reliable finger tap.
+      const size = element.getBoundingClientRect();
+      check(size.width >= 44 && size.height >= 44, `practice touch target too small: #${element.id || element.tagName.toLowerCase()} ${Math.round(size.width)}x${Math.round(size.height)} CSS pixels`);
       // Wait for Chromium to apply the iframe scroll before hit-testing.
       await new Promise(resolve => frame.contentWindow.requestAnimationFrame(() => resolve()));
       rect = element.getBoundingClientRect();
