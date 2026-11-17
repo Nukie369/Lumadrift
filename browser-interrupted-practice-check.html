@@ -34,8 +34,11 @@ frame.addEventListener('load',()=>{
    if(!practice)throw Error('Practice button unavailable after recovery');
    practice.click();
    if(!JSON.parse(localStorage.getItem(FLIGHT)||'null')?.practice)throw Error('Practice replay did not start');
+   const route=d.querySelector('#routes .route');
+   if(!route)throw Error('Practice route unavailable');
+   route.click();
    const bank=d.getElementById('bank-btn');
-   if(!bank)throw Error('Practice bank control unavailable');
+   if(!bank||bank.disabled)throw Error('Practice bank control unavailable after route');
    bank.click();
    checkSave();
    stage=2;frame.src='index.html?practice-reload=3';
