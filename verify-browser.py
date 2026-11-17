@@ -12,7 +12,7 @@ args = parser.parse_args()
 handler = functools.partial(SimpleHTTPRequestHandler, directory=Path(__file__).resolve().parent)
 with ThreadingHTTPServer(('127.0.0.1', 0), handler) as server:
     Thread(target=server.serve_forever, daemon=True).start()
-    for page in ('browser-colony-check.html', 'test-mobile.html'):
+    for page in ('browser-colony-check.html', 'test-mobile.html', 'browser-interrupted-practice-check.html'):
         url = f'http://127.0.0.1:{server.server_port}/{page}'
         result = run(args.browser, 35, url)
         print(page, 'attempt 1', result, flush=True)
