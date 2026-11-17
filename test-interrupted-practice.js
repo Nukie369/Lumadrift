@@ -49,4 +49,19 @@ const secondBoot = vm.runInNewContext(`${recovery}\ninterruptedFlight()`, {local
 assert.equal(firstBoot.practice, true);
 assert.equal(secondBoot, null, 'interrupted Practice notice must be consumed exactly once');
 assert.match(source, /state\.end=\{title:'Flight interrupted',description:interrupted\.message,icon:'🛟',earned:0,relic:null,practice:interrupted\.practice\}/);
-console.log('Interrupted Practice recovery: 9 cases passed');
+
+// A crashed standard expedition must discard unbanked cargo without touching
+// already banked rewards or granting the abandoned cargo on later launches.
+const banked = new Map([
+  ['save', JSON.stringify({credits:930, energy:2, dailyProgress:{launches:4, banked:780}})],
+  ['flight', JSON.stringify({started:now, practice:false, depth:4, cargo:9000})]
+]);
+const bankedStore = {getItem:key=>banked.get(key)??null,removeItem:key=>banked.delete(key)};
+const bankedBefore = banked.get('save');
+const abandoned = vm.runInNewContext(`${recovery}\ninterruptedFlight()`, {localStorage:bankedStore,FLIGHT_STORAGE:'flight',Date});
+assert.equal(abandoned.practice, false);
+assert.match(abandoned.message, /Unbanked virtual cargo was not awarded/);
+assert.equal(banked.get('save'), bankedBefore, 'abandoned cargo must not change previously banked rewards');
+assert.equal(banked.has('flight'), false, 'abandoned cargo marker must be consumed');
+assert.equal(vm.runInNewContext(`${recovery}\ninterruptedFlight()`, {localStorage:bankedStore,FLIGHT_STORAGE:'flight',Date}), null);
+console.log('Interrupted Practice recovery: 10 cases passed');
