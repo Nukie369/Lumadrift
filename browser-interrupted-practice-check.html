@@ -4,13 +4,13 @@
 const output=document.getElementById('result'), frame=document.getElementById('game');
 const KEY='luma_drift_save_v2', FLIGHT=KEY+'_active_flight';
 const now=Date.now(), day=new Date(), date=[day.getFullYear(),String(day.getMonth()+1).padStart(2,'0'),String(day.getDate()).padStart(2,'0')].join('-');
-const baseline={credits:725,energy:0,energyAt:now,dailyProgress:{key:date,launches:2,jumps:1,banked:200,claimed:[]}};
+const baseline={credits:725,energy:0,energyAt:now,runs:4,xp:80,total:375,dailyProgress:{key:date,launches:2,jumps:1,banked:200,claimed:[]}};
 localStorage.setItem(KEY,JSON.stringify(baseline));
 localStorage.setItem(FLIGHT,JSON.stringify({started:now,practice:true,depth:2}));
 let stage=0;
 const checkSave=()=>{
  const s=JSON.parse(localStorage.getItem(KEY));
- if(s.credits!==725||s.energy!==0||s.dailyProgress.launches!==2||s.dailyProgress.jumps!==1||s.dailyProgress.banked!==200)throw Error('Practice recovery changed wallet, fuel, or missions');
+ if(s.credits!==725||s.energy!==0||s.dailyProgress.launches!==2||s.dailyProgress.jumps!==1||s.dailyProgress.banked!==200||s.runs!==4||s.xp!==80||s.total!==375||JSON.stringify(s.dailyProgress.claimed)!=='[]')throw Error('Practice recovery changed wallet, fuel, lifetime rewards, XP, flights, or missions');
  if(localStorage.getItem(FLIGHT)!==null)throw Error('interrupted marker was not consumed');
 };
 frame.addEventListener('load',()=>{
