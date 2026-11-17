@@ -27,10 +27,22 @@ frame.addEventListener('load',()=>{
    if(!/PRACTICE FREE.*NO REWARDS/.test(replay.textContent||''))throw Error('Practice replay CTA does not disclose zero rewards');
    if(!/zero fuel required; no rewards or mission progress/i.test(replay.getAttribute('aria-label')||''))throw Error('Practice replay accessible label is incomplete');
    checkSave();stage=1;frame.src='index.html?practice-reload=2';
-  }else{
+  }else if(stage===1){
    if(d.getElementById('end-title')?.textContent==='Flight interrupted')throw Error('interruption repeated after reload');
    checkSave();
-   output.textContent='PASS: Chromium interrupted Practice notice, no rewards, preserved wallet/fuel/missions and one-time recovery after reload';
+   const practice=d.getElementById('practice-btn');
+   if(!practice)throw Error('Practice button unavailable after recovery');
+   practice.click();
+   if(!JSON.parse(localStorage.getItem(FLIGHT)||'null')?.practice)throw Error('Practice replay did not start');
+   const bank=d.getElementById('bank-btn');
+   if(!bank)throw Error('Practice bank control unavailable');
+   bank.click();
+   checkSave();
+   stage=2;frame.src='index.html?practice-reload=3';
+  }else{
+   if(d.getElementById('end-title')?.textContent==='Flight interrupted')throw Error('completed Practice replay was recovered again');
+   checkSave();
+   output.textContent='PASS: interrupted Practice recovery, zero rewards, replay and bank, preserved progress, clean reload';
   }
  }catch(e){output.textContent='FAIL: '+e.message;}
 });
