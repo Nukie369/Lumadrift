@@ -41,5 +41,12 @@ const isolated = vm.runInNewContext(`${recovery}\ninterruptedFlight()`, {localSt
 assert.equal(isolated.practice, true);
 assert.equal(saved.get('save'), before, 'interruption recovery must not alter saved wallet, fuel, or missions');
 assert.equal(saved.has('flight'), false);
+// A second boot must not resurrect an interrupted flight or duplicate any reward.
+const once = new Map([['flight', JSON.stringify({started:now, practice:true, depth:2})]]);
+const onceStore = {getItem:key=>once.get(key)??null,removeItem:key=>once.delete(key)};
+const firstBoot = vm.runInNewContext(`${recovery}\ninterruptedFlight()`, {localStorage:onceStore,FLIGHT_STORAGE:'flight',Date});
+const secondBoot = vm.runInNewContext(`${recovery}\ninterruptedFlight()`, {localStorage:onceStore,FLIGHT_STORAGE:'flight',Date});
+assert.equal(firstBoot.practice, true);
+assert.equal(secondBoot, null, 'interrupted Practice notice must be consumed exactly once');
 assert.match(source, /state\.end=\{title:'Flight interrupted',description:interrupted\.message,icon:'🛟',earned:0,relic:null,practice:interrupted\.practice\}/);
 console.log('Interrupted Practice recovery: 9 cases passed');
