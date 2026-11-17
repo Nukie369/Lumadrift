@@ -1,0 +1,35 @@
+<!doctype html><meta charset="utf-8"><title>Interrupted Practice browser regression</title>
+<output id="result">RUNNING</output><iframe id="game" src="about:blank" style="width:390px;height:800px"></iframe>
+<script>
+const output=document.getElementById('result'), frame=document.getElementById('game');
+const KEY='luma_drift_save_v2', FLIGHT=KEY+'_active_flight';
+const now=Date.now(), day=new Date(), date=[day.getFullYear(),String(day.getMonth()+1).padStart(2,'0'),String(day.getDate()).padStart(2,'0')].join('-');
+const baseline={credits:725,energy:0,energyAt:now,dailyProgress:{key:date,launches:2,jumps:1,banked:200,claimed:[]}};
+localStorage.setItem(KEY,JSON.stringify(baseline));
+localStorage.setItem(FLIGHT,JSON.stringify({started:now,practice:true,depth:2}));
+let stage=0;
+const checkSave=()=>{
+ const s=JSON.parse(localStorage.getItem(KEY));
+ if(s.credits!==725||s.energy!==0||s.dailyProgress.launches!==2||s.dailyProgress.jumps!==1||s.dailyProgress.banked!==200)throw Error('Practice recovery changed wallet, fuel, or missions');
+ if(localStorage.getItem(FLIGHT)!==null)throw Error('interrupted marker was not consumed');
+};
+frame.addEventListener('load',()=>{
+ if(frame.getAttribute('src')==='about:blank'||output.textContent!=='RUNNING')return;
+ try{
+  const d=frame.contentDocument;
+  if(stage===0){
+   if(d.getElementById('end-title')?.textContent!=='Flight interrupted')throw Error('interruption results missing');
+   if(!/No virtual rewards were affected/.test(d.getElementById('end-desc')?.textContent||''))throw Error('Practice recovery rewards label incorrect');
+   if(!/PRACTICE REWARDS.*NONE/.test(d.getElementById('end-earned')?.previousElementSibling?.textContent||''))throw Error('Practice rewards heading incorrect');
+   if(d.getElementById('end-earned')?.textContent!=='0')throw Error('Practice incorrectly awarded shards');
+   checkSave();stage=1;frame.src='index.html?practice-reload=2';
+  }else{
+   if(d.getElementById('end-title')?.textContent==='Flight interrupted')throw Error('interruption repeated after reload');
+   checkSave();
+   output.textContent='PASS: Chromium interrupted Practice notice, no rewards, preserved wallet/fuel/missions and one-time recovery after reload';
+  }
+ }catch(e){output.textContent='FAIL: '+e.message;}
+});
+frame.src='index.html?practice-reload=1';
+setTimeout(()=>{if(output.textContent==='RUNNING')output.textContent='FAIL: interrupted Practice browser timeout at stage '+stage;},12000);
+</script>
