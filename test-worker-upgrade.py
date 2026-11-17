@@ -86,6 +86,7 @@ def run(browser, temp):
                     break
                 page.wait_for_timeout(250)
             if observed != target:
+                print(f'Upgrade {current}->{target} did not reach target after four navigations; collecting worker/cache state', flush=True)
                 diagnostics = page.evaluate("""async () => {
                   const reg = await navigator.serviceWorker.getRegistration('/game/');
                   const keys = await caches.keys();
