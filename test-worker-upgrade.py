@@ -68,10 +68,16 @@ def run(browser, temp):
             assert page.evaluate("""async () => (await (await fetch('game.js')).text())
                                   .includes("dataset.release = '" + document.body.dataset.release + "'")""")
             page.close()
-            observer.wait_for_function("""async () => {
+            # A registration can briefly report its old active worker after
+            # the last game tab closes. Wait for the *new* cache to be the
+            # only Luma cache: activation deletes previous release caches.
+            target_cache = (game / 'sw.js').read_text().split("const CACHE = '", 1)[1].split("'", 1)[0]
+            observer.wait_for_function("""async targetCache => {
               const reg = await navigator.serviceWorker.getRegistration('/game/');
-              return reg?.active?.state === 'activated' && !reg.waiting && !reg.installing;
-            }""")
+              const keys = (await caches.keys()).filter(k => k.startsWith('luma-drift-'));
+              return reg?.active?.state === 'activated' && !reg.waiting &&
+                     !reg.installing && keys.length === 1 && keys[0] === targetCache;
+            }""", arg=target_cache)
             # Wait for the new worker to control a fresh navigation. An active
             # registration alone does not guarantee that the first tab uses it.
             page = context.new_page()
