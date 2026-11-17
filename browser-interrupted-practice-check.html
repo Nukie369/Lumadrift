@@ -22,6 +22,10 @@ frame.addEventListener('load',()=>{
    if(!/No virtual rewards were affected/.test(d.getElementById('end-desc')?.textContent||''))throw Error('Practice recovery rewards label incorrect');
    if(!/PRACTICE REWARDS.*NONE/.test(d.getElementById('end-earned')?.previousElementSibling?.textContent||''))throw Error('Practice rewards heading incorrect');
    if(d.getElementById('end-earned')?.textContent!=='0')throw Error('Practice incorrectly awarded shards');
+   const replay=d.getElementById('again-btn');
+   if(!replay||replay.dataset.replayMode!=='practice')throw Error('zero-fuel results did not offer Practice');
+   if(!/PRACTICE FREE.*NO REWARDS/.test(replay.textContent||''))throw Error('Practice replay CTA does not disclose zero rewards');
+   if(!/zero fuel required; no rewards or mission progress/i.test(replay.getAttribute('aria-label')||''))throw Error('Practice replay accessible label is incomplete');
    checkSave();stage=1;frame.src='index.html?practice-reload=2';
   }else{
    if(d.getElementById('end-title')?.textContent==='Flight interrupted')throw Error('interruption repeated after reload');
