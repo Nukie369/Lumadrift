@@ -85,7 +85,22 @@ def run(browser, temp):
                 if observed == target:
                     break
                 page.wait_for_timeout(250)
-            assert observed == target, f'Expected release {target}; got {observed} after 4 navigations'
+            if observed != target:
+                diagnostics = page.evaluate("""async () => {
+                  const reg = await navigator.serviceWorker.getRegistration('/game/');
+                  const keys = await caches.keys();
+                  const entries = {};
+                  for (const key of keys) {
+                    const cache = await caches.open(key);
+                    const response = await cache.match('/game/game.js');
+                    entries[key] = response ? (await response.text()).match(/dataset.release = '[^']+'/)?.[0] : null;
+                  }
+                  return {controller: navigator.serviceWorker.controller?.scriptURL,
+                          active: reg?.active?.scriptURL, activeState: reg?.active?.state,
+                          waiting: reg?.waiting?.scriptURL, installing: reg?.installing?.scriptURL,
+                          caches: entries};
+                }""")
+                raise AssertionError(f'Expected release {target}; got {observed} after 4 navigations; worker diagnostics: {diagnostics}')
             assert page.locator('#credits').inner_text() == credits, 'Saved reward lost on upgrade'
             return page
 
