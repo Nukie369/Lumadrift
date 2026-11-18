@@ -4,6 +4,7 @@ from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from threading import Thread
 import argparse
+import shutil
 from playwright.sync_api import sync_playwright
 
 parser = argparse.ArgumentParser()
@@ -12,7 +13,10 @@ args = parser.parse_args()
 with ThreadingHTTPServer(('127.0.0.1', 0), partial(SimpleHTTPRequestHandler, directory=Path(__file__).resolve().parent)) as server:
     Thread(target=server.serve_forever, daemon=True).start()
     with sync_playwright() as pw:
-        browser = pw.chromium.launch(executable_path=args.browser)
+        browser_path = shutil.which(args.browser)
+        if not browser_path:
+            raise RuntimeError(f'Browser executable not found on PATH: {args.browser}')
+        browser = pw.chromium.launch(executable_path=browser_path)
         context = browser.new_context(viewport={'width': 390, 'height': 844}, device_scale_factor=2, is_mobile=True, has_touch=True)
         page = context.new_page()
         page.goto(f'http://127.0.0.1:{server.server_port}/luma-drift-standalone-v8.2.html')
