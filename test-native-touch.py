@@ -33,7 +33,19 @@ with ThreadingHTTPServer(('127.0.0.1', 0), partial(SimpleHTTPRequestHandler, dir
             x, y = box['x'] + box['width']/2, box['y'] + box['height']/2
             assert page.evaluate("([x, y, target]) => { const hit = document.elementFromPoint(x, y); return hit === target || target.contains(hit); }", [x, y, el.element_handle()]), f'Touch target obscured: {selector}'
             page.touchscreen.tap(x, y)
+        # Start from a genuinely empty tank, not a free Practice flight
+        # while standard replay is still available.
+        page.evaluate("""() => {
+          const key = 'luma_drift_save_v2';
+          const save = JSON.parse(localStorage.getItem(key));
+          save.energy = 0;
+          save.energyAt = Date.now();
+          localStorage.setItem(key, JSON.stringify(save));
+        }""")
+        page.reload()
+        page.wait_for_selector('#practice-btn')
         touch('[data-tab="flight"]')
+        assert page.evaluate("() => JSON.parse(localStorage.getItem('luma_drift_save_v2')).energy") == 0
         mission_progress = page.evaluate("() => JSON.parse(localStorage.getItem('luma_drift_save_v2')).dailyProgress")
         credits = page.locator('#credits').inner_text()
         fuel = page.locator('#energy').inner_text()
@@ -47,19 +59,8 @@ with ThreadingHTTPServer(('127.0.0.1', 0), partial(SimpleHTTPRequestHandler, dir
             assert page.locator('#energy').inner_text() == fuel, 'Practice consumed fuel'
             assert page.evaluate("() => JSON.parse(localStorage.getItem('luma_drift_save_v2')).dailyProgress") == mission_progress, 'Practice advanced missions'
             if i == 0:
-                # Fly Again is a paid-fuel expedition when fuel remains; do not
-                # accidentally turn this free-Practice regression into a standard flight.
-                replay_mode = page.locator('#again-btn').get_attribute('data-replay-mode')
-                if replay_mode == 'practice':
-                    touch('#again-btn')
-                else:
-                    # Results overlay hides Practice; return to the flight screen.
-                    page.reload()
-                    page.wait_for_selector('#practice-btn')
-                    touch('[data-tab="flight"]')
-                    assert page.locator('#credits').inner_text() == credits
-                    assert page.locator('#energy').inner_text() == fuel
-                    touch('#practice-btn')
+                assert page.locator('#again-btn').get_attribute('data-replay-mode') == 'practice', 'Zero fuel did not offer free replay'
+                touch('#again-btn')
         page.reload()
         page.wait_for_selector('#practice-btn')
         assert page.locator('#credits').inner_text() == credits, 'Reload changed Practice wallet'
