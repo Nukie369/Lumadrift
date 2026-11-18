@@ -1,0 +1,44 @@
+"""Mobile-emulated touchscreen smoke; not Android hardware validation."""
+from functools import partial
+from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
+from pathlib import Path
+from threading import Thread
+import argparse
+from playwright.sync_api import sync_playwright
+
+parser = argparse.ArgumentParser()
+parser.add_argument('--browser', default='google-chrome')
+args = parser.parse_args()
+with ThreadingHTTPServer(('127.0.0.1', 0), partial(SimpleHTTPRequestHandler, directory=Path(__file__).resolve().parent)) as server:
+    Thread(target=server.serve_forever, daemon=True).start()
+    with sync_playwright() as pw:
+        browser = pw.chromium.launch(executable_path=args.browser)
+        context = browser.new_context(viewport={'width': 390, 'height': 844}, device_scale_factor=2, is_mobile=True, has_touch=True)
+        page = context.new_page()
+        page.goto(f'http://127.0.0.1:{server.server_port}/luma-drift-standalone-v8.2.html')
+        page.wait_for_selector('#practice-btn')
+        page.evaluate("""() => {
+          Object.defineProperty(crypto, 'getRandomValues', {configurable: true, value: a => {a.fill(0xffffffff); return a;}});
+          document.querySelector('[data-tab="flight"]').click();
+        }""")
+        def touch(selector):
+            el = page.locator(selector).first
+            el.scroll_into_view_if_needed()
+            box = el.bounding_box()
+            assert box and box['width'] >= 44 and box['height'] >= 44, f'Undersized touch target: {selector}'
+            page.touchscreen.tap(box['x'] + box['width']/2, box['y'] + box['height']/2)
+        credits = page.locator('#credits').inner_text()
+        fuel = page.locator('#energy').inner_text()
+        touch('#practice-btn')
+        for i in range(2):
+            page.wait_for_selector('#run-controls:visible')
+            touch('#routes button')
+            touch('#bank-btn')
+            assert page.locator('#end-earned').inner_text() == '0', 'Practice awarded currency'
+            assert page.locator('#credits').inner_text() == credits, 'Practice changed wallet'
+            assert page.locator('#energy').inner_text() == fuel, 'Practice consumed fuel'
+            if i == 0:
+                touch('#again-btn')
+        print('PASS: two touchscreen Practice flights; wallet and fuel preserved')
+        context.close()
+        browser.close()
