@@ -43,6 +43,10 @@ with ThreadingHTTPServer(('127.0.0.1', 0), partial(SimpleHTTPRequestHandler, dir
             assert page.locator('#energy').inner_text() == fuel, 'Practice consumed fuel'
             if i == 0:
                 touch('#again-btn')
-        print('PASS: two touchscreen Practice flights; wallet and fuel preserved')
+        page.reload()
+        page.wait_for_selector('#practice-btn')
+        assert page.locator('#credits').inner_text() == credits, 'Reload changed Practice wallet'
+        assert page.locator('#energy').inner_text() == fuel, 'Reload changed Practice fuel'
+        print('PASS: two touchscreen Practice flights; wallet and fuel preserved after reload')
         context.close()
         browser.close()
