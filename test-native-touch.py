@@ -62,7 +62,10 @@ with ThreadingHTTPServer(('127.0.0.1', 0), partial(SimpleHTTPRequestHandler, dir
         }""")
         page.reload()
         page.wait_for_selector('#practice-btn')
-        touch('[data-tab="flight"]')
+        # The initial Flight tab is already selected; tapping its covered nav
+        # item is unnecessary for the zero-fuel replay scenario.
+        assert page.locator('[data-tab="flight"]').get_attribute('class').find('active') >= 0, 'Flight tab not initially selected'
+        assert page.locator('#practice-btn').is_visible(), 'Flight controls unavailable'
         assert page.evaluate("() => JSON.parse(localStorage.getItem('luma_drift_save_v2')).energy") == 0
         mission_progress = page.evaluate("() => JSON.parse(localStorage.getItem('luma_drift_save_v2')).dailyProgress")
         credits = page.locator('#credits').inner_text()
