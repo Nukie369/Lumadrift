@@ -45,7 +45,13 @@ with ThreadingHTTPServer(('127.0.0.1', 0), partial(SimpleHTTPRequestHandler, dir
             assert page.locator('#credits').inner_text() == credits, 'Practice changed wallet'
             assert page.locator('#energy').inner_text() == fuel, 'Practice consumed fuel'
             if i == 0:
-                touch('#again-btn')
+                # Fly Again is a paid-fuel expedition when fuel remains; do not
+                # accidentally turn this free-Practice regression into a standard flight.
+                replay_mode = page.locator('#again-btn').get_attribute('data-replay-mode')
+                if replay_mode == 'practice':
+                    touch('#again-btn')
+                else:
+                    touch('#practice-btn')
         page.reload()
         page.wait_for_selector('#practice-btn')
         assert page.locator('#credits').inner_text() == credits, 'Reload changed Practice wallet'
