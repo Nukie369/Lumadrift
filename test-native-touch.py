@@ -48,7 +48,8 @@ with ThreadingHTTPServer(('127.0.0.1', 0), partial(SimpleHTTPRequestHandler, dir
                   const hit = document.elementFromPoint(x, y);
                   return hit ? hit.tagName + '#' + hit.id + '.' + hit.className : 'none';
                 }""", [box['x'] + box['width']/2, box['y'] + box['height']/2])
-                raise AssertionError(f'Touch target obscured: {selector}; center hit={detail}; box={box}')
+                page.screenshot(path='native-touch-obstruction.png', full_page=True)
+                raise AssertionError(f'Touch target obscured: {selector}; center hit={detail}; box={box}; screenshot=native-touch-obstruction.png')
             page.touchscreen.tap(*point)
         # Start from a genuinely empty tank, not a free Practice flight
         # while standard replay is still available.
