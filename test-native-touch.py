@@ -81,7 +81,13 @@ with ThreadingHTTPServer(('127.0.0.1', 0), partial(SimpleHTTPRequestHandler, dir
             assert page.evaluate("() => JSON.parse(localStorage.getItem('luma_drift_save_v2')).dailyProgress") == mission_progress, 'Practice advanced missions'
             if i == 0:
                 assert page.locator('#again-btn').get_attribute('data-replay-mode') == 'practice', 'Zero fuel did not offer free replay'
+                # One direct tap from the empty-tank results screen must start
+                # free Practice; no store offer or dismissal is required.
+                assert page.locator('#again-btn').is_visible(), 'Free replay hidden on results screen'
                 touch('#again-btn')
+                page.wait_for_selector('#run-controls:visible')
+                assert not page.locator('#end-earned').is_visible(), 'Results overlay did not close for free replay'
+                assert page.locator('#energy').inner_text() == fuel, 'Free replay consumed fuel'
         page.reload()
         page.wait_for_selector('#practice-btn')
         assert page.locator('#credits').inner_text() == credits, 'Reload changed Practice wallet'
