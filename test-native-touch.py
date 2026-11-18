@@ -30,9 +30,26 @@ with ThreadingHTTPServer(('127.0.0.1', 0), partial(SimpleHTTPRequestHandler, dir
             box = el.bounding_box()
             assert box and box['width'] >= 44 and box['height'] >= 44, f'Undersized touch target: {selector}'
             assert el.is_visible() and el.is_enabled(), f'Unavailable touch target: {selector}'
-            x, y = box['x'] + box['width']/2, box['y'] + box['height']/2
-            assert page.evaluate("([x, y, target]) => { const hit = document.elementFromPoint(x, y); return hit === target || target.contains(hit); }", [x, y, el.element_handle()]), f'Touch target obscured: {selector}'
-            page.touchscreen.tap(x, y)
+            # A large control may have an overlapping badge at its center.
+            # Find a genuinely hittable point rather than bypassing touch input.
+            hit_test = """([x, y, target]) => {
+              const hit = document.elementFromPoint(x, y);
+              return hit === target || target.contains(hit);
+            }"""
+            target = el.element_handle()
+            point = None
+            for fx, fy in ((.5, .5), (.25, .5), (.75, .5), (.5, .25), (.5, .75)):
+                x, y = box['x'] + box['width']*fx, box['y'] + box['height']*fy
+                if page.evaluate(hit_test, [x, y, target]):
+                    point = (x, y)
+                    break
+            if point is None:
+                detail = page.evaluate("""([x, y]) => {
+                  const hit = document.elementFromPoint(x, y);
+                  return hit ? hit.tagName + '#' + hit.id + '.' + hit.className : 'none';
+                }""", [box['x'] + box['width']/2, box['y'] + box['height']/2])
+                raise AssertionError(f'Touch target obscured: {selector}; center hit={detail}; box={box}')
+            page.touchscreen.tap(*point)
         # Start from a genuinely empty tank, not a free Practice flight
         # while standard replay is still available.
         page.evaluate("""() => {
