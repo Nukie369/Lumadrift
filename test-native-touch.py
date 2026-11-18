@@ -23,7 +23,6 @@ with ThreadingHTTPServer(('127.0.0.1', 0), partial(SimpleHTTPRequestHandler, dir
         page.wait_for_selector('#practice-btn')
         page.evaluate("""() => {
           Object.defineProperty(crypto, 'getRandomValues', {configurable: true, value: a => {a.fill(0xffffffff); return a;}});
-          document.querySelector('[data-tab="flight"]').click();
         }""")
         def touch(selector):
             el = page.locator(selector).first
@@ -34,6 +33,7 @@ with ThreadingHTTPServer(('127.0.0.1', 0), partial(SimpleHTTPRequestHandler, dir
             x, y = box['x'] + box['width']/2, box['y'] + box['height']/2
             assert page.evaluate("([x, y, target]) => { const hit = document.elementFromPoint(x, y); return hit === target || target.contains(hit); }", [x, y, el.element_handle()]), f'Touch target obscured: {selector}'
             page.touchscreen.tap(x, y)
+        touch('[data-tab="flight"]')
         mission_progress = page.evaluate("() => JSON.parse(localStorage.getItem('luma_drift_save_v2')).dailyProgress")
         credits = page.locator('#credits').inner_text()
         fuel = page.locator('#energy').inner_text()
@@ -56,7 +56,7 @@ with ThreadingHTTPServer(('127.0.0.1', 0), partial(SimpleHTTPRequestHandler, dir
                     # Results overlay hides Practice; return to the flight screen.
                     page.reload()
                     page.wait_for_selector('#practice-btn')
-                    page.locator('[data-tab="flight"]').click()
+                    touch('[data-tab="flight"]')
                     assert page.locator('#credits').inner_text() == credits
                     assert page.locator('#energy').inner_text() == fuel
                     touch('#practice-btn')
