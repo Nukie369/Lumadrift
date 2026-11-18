@@ -67,6 +67,12 @@ with ThreadingHTTPServer(('127.0.0.1', 0), partial(SimpleHTTPRequestHandler, dir
         assert page.locator('[data-tab="flight"]').get_attribute('class').find('active') >= 0, 'Flight tab not initially selected'
         assert page.locator('#practice-btn').is_visible(), 'Flight controls unavailable'
         assert page.evaluate("() => JSON.parse(localStorage.getItem('luma_drift_save_v2')).energy") == 0
+        # Verify persisted economy state as well as HUD text: a UI-only check
+        # could miss a hidden Practice payout or fuel debit.
+        economy_before = page.evaluate("""() => {
+          const s = JSON.parse(localStorage.getItem('luma_drift_save_v2'));
+          return {credits: s.credits, energy: s.energy};
+        }""")
         mission_progress = page.evaluate("() => JSON.parse(localStorage.getItem('luma_drift_save_v2')).dailyProgress")
         credits = page.locator('#credits').inner_text()
         fuel = page.locator('#energy').inner_text()
@@ -78,6 +84,10 @@ with ThreadingHTTPServer(('127.0.0.1', 0), partial(SimpleHTTPRequestHandler, dir
             assert page.locator('#end-earned').inner_text() == '0', 'Practice awarded currency'
             assert page.locator('#credits').inner_text() == credits, 'Practice changed wallet'
             assert page.locator('#energy').inner_text() == fuel, 'Practice consumed fuel'
+            assert page.evaluate("""() => {
+              const s = JSON.parse(localStorage.getItem('luma_drift_save_v2'));
+              return {credits: s.credits, energy: s.energy};
+            }""") == economy_before, 'Practice modified persisted economy'
             assert page.evaluate("() => JSON.parse(localStorage.getItem('luma_drift_save_v2')).dailyProgress") == mission_progress, 'Practice advanced missions'
             if i == 0:
                 assert page.locator('#again-btn').get_attribute('data-replay-mode') == 'practice', 'Zero fuel did not offer free replay'
@@ -92,6 +102,10 @@ with ThreadingHTTPServer(('127.0.0.1', 0), partial(SimpleHTTPRequestHandler, dir
         page.wait_for_selector('#practice-btn')
         assert page.locator('#credits').inner_text() == credits, 'Reload changed Practice wallet'
         assert page.locator('#energy').inner_text() == fuel, 'Reload changed Practice fuel'
+        assert page.evaluate("""() => {
+          const s = JSON.parse(localStorage.getItem('luma_drift_save_v2'));
+          return {credits: s.credits, energy: s.energy};
+        }""") == economy_before, 'Reload changed persisted Practice economy'
         assert page.evaluate("() => JSON.parse(localStorage.getItem('luma_drift_save_v2')).dailyProgress") == mission_progress, 'Reload changed Practice missions'
         print('PASS: two touchscreen Practice flights; wallet and fuel preserved after reload')
         context.close()
