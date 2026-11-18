@@ -30,7 +30,10 @@ with ThreadingHTTPServer(('127.0.0.1', 0), partial(SimpleHTTPRequestHandler, dir
             el.scroll_into_view_if_needed()
             box = el.bounding_box()
             assert box and box['width'] >= 44 and box['height'] >= 44, f'Undersized touch target: {selector}'
-            page.touchscreen.tap(box['x'] + box['width']/2, box['y'] + box['height']/2)
+            assert el.is_visible() and el.is_enabled(), f'Unavailable touch target: {selector}'
+            x, y = box['x'] + box['width']/2, box['y'] + box['height']/2
+            assert page.evaluate("([x, y, target]) => { const hit = document.elementFromPoint(x, y); return hit === target || target.contains(hit); }", [x, y, el.element_handle()]), f'Touch target obscured: {selector}'
+            page.touchscreen.tap(x, y)
         credits = page.locator('#credits').inner_text()
         fuel = page.locator('#energy').inner_text()
         touch('#practice-btn')
