@@ -51,6 +51,12 @@ with ThreadingHTTPServer(('127.0.0.1', 0), partial(SimpleHTTPRequestHandler, dir
                 if replay_mode == 'practice':
                     touch('#again-btn')
                 else:
+                    # Results overlay hides Practice; return to the flight screen.
+                    page.reload()
+                    page.wait_for_selector('#practice-btn')
+                    page.locator('[data-tab="flight"]').click()
+                    assert page.locator('#credits').inner_text() == credits
+                    assert page.locator('#energy').inner_text() == fuel
                     touch('#practice-btn')
         page.reload()
         page.wait_for_selector('#practice-btn')
