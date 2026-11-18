@@ -25,3 +25,28 @@ assert.equal(state.energy,0,'rendering must not consume fuel');
 const noButton = {state, $:()=>null};
 assert.doesNotThrow(()=>vm.runInNewContext(match[0]+'; renderReplayChoice();',noButton));
 console.log('Replay choice: zero fuel, recharge, depletion, and missing DOM pass');
+
+const handlerMatch = source.match(/\$\('again-btn'\)\.addEventListener\('click',(\(\)=>\{.*?\})\);\$\('end-hangar-btn'\)/s);
+assert.ok(handlerMatch, 'results-screen replay handler exists');
+function replayScenario(mode, before, after, expectedLaunch, warned) {
+  const events=[];
+  const save={energy:before,end:{earned:42}};
+  const btn={dataset:{replayMode:mode}};
+  const env={
+    state:save, $:()=>btn,
+    regen:()=>{save.energy=after;events.push('regen');},
+    renderReplayChoice:()=>events.push('rerender'),
+    notify:()=>events.push('warning'),
+    launch:practice=>events.push('launch:'+practice)
+  };
+  vm.runInNewContext(handlerMatch[1],env)();
+  assert.equal(events[0],'regen');
+  assert.equal(events.find(x=>x.startsWith('launch:'))??null,expectedLaunch);
+  assert.equal(events.includes('warning'),warned);
+  assert.equal(save.end.earned,42,'banked cargo must not be credited twice');
+}
+replayScenario('practice',0,0,'launch:true',false);
+replayScenario('practice',0,1,'launch:true',false);
+replayScenario('standard',0,1,'launch:false',false);
+replayScenario('standard',1,0,null,true);
+console.log('Results-screen replay: zero fuel, recharge, and depleted fuel pass');
