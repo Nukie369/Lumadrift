@@ -22,7 +22,7 @@ with ThreadingHTTPServer(('127.0.0.1', 0), partial(SimpleHTTPRequestHandler, dir
         page.goto(f'http://127.0.0.1:{server.server_port}/luma-drift-standalone-v8.2.html')
         page.wait_for_selector('#practice-btn')
         page.evaluate("""() => {
-          // Force a safe crossing so the bank button becomes enabled.\n          // 0xffffffff produces a storm on every crossing and cannot bank cargo.\n          Object.defineProperty(crypto, 'getRandomValues', {configurable: true, value: a => {a.fill(0); return a;}});
+          // A 50% roll exceeds every first-crossing hazard (max 41%).\n          // Zero produces a storm, leaving cargo at zero and Bank disabled.\n          Object.defineProperty(crypto, 'getRandomValues', {configurable: true, value: a => {a.fill(0x80000000); return a;}});
         }""")
         def touch(selector):
             el = page.locator(selector).first
