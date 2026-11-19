@@ -20,6 +20,11 @@ for(const [i,crashed] of [false,true].entries()){
   assert.equal(state.end.relic,null,'practice has no relic');
   assert.equal(JSON.stringify({energy:state.energy,credits:state.credits,total:state.total,best:state.best,xp:state.xp,wins:state.wins,dailyProgress:state.dailyProgress,atlas:state.atlas}),before,'practice preserves economy and missions');
 }
-assert.equal(events.length,2);
+// Zero-cargo Practice can end immediately without awarding currency or missions.
+run={practice:true,cargo:0,depth:0,hull:3};
+assert.equal(context.testFinish(run,false,false),null,'zero-cargo Practice ends');
+assert.equal(state.end.earned,0,'zero-cargo Practice earns nothing');
+assert.equal(JSON.stringify({energy:state.energy,credits:state.credits,total:state.total,best:state.best,xp:state.xp,wins:state.wins,dailyProgress:state.dailyProgress,atlas:state.atlas}),before,'zero-cargo Practice preserves economy and missions');
+assert.equal(events.length,3);
 assert.ok(events.every(e=>e.practice===true&&e.earned===0));
-console.log('Practice finish: success and crash preserve fuel, wallet, XP, missions and relics');
+console.log('Practice finish: success, crash, and zero-cargo exit preserve fuel, wallet, XP, missions and relics');
