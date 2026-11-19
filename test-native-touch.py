@@ -136,6 +136,11 @@ with ThreadingHTTPServer(('127.0.0.1', 0), partial(SimpleHTTPRequestHandler, dir
           window.dispatchEvent(new Event('focus'));
         }""")
         assert page.locator('#energy').inner_text() == '1/5', 'Timed recharge did not restore one fuel'
+        # Recharge is time-based, not a purchase or flight: no wallet debit,
+        # mission progress, or fuel spend may occur before the player's tap.
+        assert page.locator('#credits').inner_text() == credits, 'Recharge changed wallet before replay'
+        assert page.evaluate("() => JSON.parse(localStorage.getItem('luma_drift_save_v2')).energy") == 1, 'Recharge did not persist one fuel'
+        assert page.evaluate("() => JSON.parse(localStorage.getItem('luma_drift_save_v2')).dailyProgress") == mission_progress, 'Recharge advanced missions before replay'
         assert page.locator('#again-btn').get_attribute('data-replay-mode') == 'standard', 'Results did not refresh replay mode after recharge'
         assert '1 FUEL' in page.locator('#again-btn').inner_text(), 'Recharged replay cost not disclosed'
         touch('#again-btn')
