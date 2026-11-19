@@ -1,0 +1,33 @@
+const fs=require('node:fs');
+const assert=require('node:assert/strict');
+const source=fs.readFileSync(__dirname+'/game.js','utf8');
+const start=source.indexOf('  function renderRewards(){');
+const end=source.indexOf('\n  // Pure funding calculation:',start);
+assert(start>=0&&end>start,'renderRewards source must exist');
+const renderSource=source.slice(start,end);
+function check({claim,streak,bonus=0,expectedDay,expectedGift,claimed}){
+  const elements=new Map();
+  const element=()=>({textContent:'',disabled:false,children:[],classList:{toggle(){}},replaceChildren(){this.children=[]},append(child){this.children.push(child)},setAttribute(k,v){this[k]=v}});
+  const $=id=>{if(!elements.has(id))elements.set(id,element());return elements.get(id)};
+  const document={createElement:element};
+  const state={dailyClaim:claim,dailyStreak:streak};
+  const dateKey=()=> '2026-11-19';
+  const dayDistance=(a,b)=>Math.round((Date.parse(b+'T00:00:00Z')-Date.parse(a+'T00:00:00Z'))/86400000);
+  const colonyBonus=()=>bonus;
+  const nf=new Intl.NumberFormat('en-US');
+  new Function('$','document','state','dateKey','dayDistance','colonyBonus','nf',renderSource+'\nrenderRewards();')($,document,state,dateKey,dayDistance,colonyBonus,nf);
+  assert.equal($('daily-btn').disabled,claimed);
+  assert.equal($('checkin-btn').disabled,claimed);
+  assert.match($('checkin-sub').textContent,new RegExp('Day '+expectedDay+' of 7'));
+  assert.match($('checkin-sub').textContent,new RegExp(expectedGift.toLocaleString('en-US')+' free'));
+  assert.equal($('streak-count').textContent,'DAY '+(claimed?streak:expectedDay)+' / 7');
+  assert.equal($('streak-days').children.length,7);
+  const expectedLabel='Day '+expectedDay+': '+expectedGift.toLocaleString('en-US')+' virtual shards';
+  assert.ok($('streak-days').children.some(x=>x['aria-label']?.startsWith(expectedLabel)));
+}
+check({claim:'2026-11-19',streak:3,expectedDay:4,expectedGift:160,claimed:true});
+check({claim:'2026-11-19',streak:7,expectedDay:1,expectedGift:100,claimed:true});
+check({claim:'2026-11-18',streak:6,expectedDay:7,expectedGift:400,claimed:false});
+check({claim:'2026-11-16',streak:6,expectedDay:1,expectedGift:100,claimed:false});
+check({claim:'2026-11-19',streak:2,bonus:25,expectedDay:3,expectedGift:165,claimed:true});
+console.log('PASS: five executable daily supply rendering scenarios');
