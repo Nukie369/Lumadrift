@@ -300,7 +300,7 @@ frame.onload = async () => {
     check(Number(expectedCredits) > 150, 'mission reward not credited');
     stage = 1;
     frame.src = 'luma-drift-standalone-v8.2.html?reload=1';
-  } catch (err) { clearTimeout(smokeTimeout); if (!timedOut) result.textContent = 'FAIL: ' + err.message; }
+  } catch (err) { clearTimeout(smokeTimeout); if (!timedOut) result.textContent = 'FAIL: stage ' + stage + ': ' + (err.stack || err.message); }
 };
 frame.src = 'luma-drift-standalone-v8.2.html';
 </script>
