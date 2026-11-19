@@ -431,7 +431,7 @@
     $('checkin-head').textContent=already?'Your daily delivery is complete':'Your daily supply is ready!';
     $('checkin-sub').textContent=already?'New cargo arrives tomorrow. Keep exploring!':`Day ${next} of 7 · ${nf.format(gift)} free shards waiting`;
     $('daily-banner').classList.toggle('collected',already);
-    $('streak-count').textContent=`DAY ${state.dailyStreak} / 7`;
+    $('streak-count').textContent=`DAY ${already?state.dailyStreak:next} / 7`;
     $('streak-title').textContent=already?'A little progress, every day.':'Follow the stars to your next reward';
     const days=$('streak-days');days.replaceChildren();
     for(let i=1;i<=7;i++){
