@@ -58,6 +58,15 @@ with ThreadingHTTPServer(('127.0.0.1', 0), partial(SimpleHTTPRequestHandler, dir
           const save = JSON.parse(localStorage.getItem(key));
           save.energy = 0;
           save.energyAt = Date.now();
+          // The game validates an FNV-1a checkpoint checksum on reload.
+          // Re-sign the test fixture; otherwise it restores the older backup
+          // with five fuel, falsely reporting a replay-mode regression.
+          const payload = {...save};
+          delete payload.checkpointHash;
+          let hash = 2166136261;
+          for (const char of JSON.stringify(payload))
+            hash = Math.imul(hash ^ char.charCodeAt(0), 16777619) >>> 0;
+          save.checkpointHash = hash.toString(16).padStart(8, '0');
           localStorage.setItem(key, JSON.stringify(save));
         }""")
         page.reload()
@@ -66,7 +75,7 @@ with ThreadingHTTPServer(('127.0.0.1', 0), partial(SimpleHTTPRequestHandler, dir
         # item is unnecessary for the zero-fuel replay scenario.
         assert page.locator('[data-tab="flight"]').get_attribute('class').find('active') >= 0, 'Flight tab not initially selected'
         assert page.locator('#practice-btn').is_visible(), 'Flight controls unavailable'
-        assert page.evaluate("() => JSON.parse(localStorage.getItem('luma_drift_save_v2')).energy") == 0
+        assert page.locator('#energy').inner_text() == '0/5', 'Game did not restore zero-fuel checkpoint'\n        assert page.evaluate("() => JSON.parse(localStorage.getItem('luma_drift_save_v2')).energy") == 0
         # Verify persisted economy state as well as HUD text: a UI-only check
         # could miss a hidden Practice payout or fuel debit.
         economy_before = page.evaluate("""() => {
