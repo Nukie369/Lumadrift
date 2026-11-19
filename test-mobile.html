@@ -244,6 +244,7 @@ frame.onload = async () => {
     check(!get('run-controls').hidden && get('energy').textContent === '5/5', 'practice launch');
     check(get('scene-label').textContent === 'PRACTICE FLIGHT / NO REWARDS', 'initial practice scene heading missing no-rewards disclosure');
     const practiceRoute = get('routes').firstElementChild;
+    check(practiceRoute, `practice route missing after launch: routes=${get('routes').children.length}, scene=${get('scene-label').textContent}, controlsHidden=${get('run-controls').hidden}, document=${doc.readyState}, gameErrors=${frame.contentWindow.__lumaErrors || 'not captured'}`);
     check(practiceRoute.textContent.includes('simulation only') && practiceRoute.textContent.includes('no rewards'), 'practice route visually implies earnable cargo');
     check(practiceRoute.getAttribute('aria-label').includes('simulated') && practiceRoute.getAttribute('aria-label').includes('no rewards awarded'), 'practice route accessibility label implies earnable cargo');
     // Fix the random draw for this test window only so both route outcomes are reproducible.
