@@ -19,7 +19,11 @@ let expectedMissionHidden = null;
 frame.onload = async () => {
   try {
     const doc = frame.contentDocument;
-    const get = id => doc.getElementById(id);
+    const get = id => {
+      const element = doc.getElementById(id);
+      if (!element) throw Error(`mobile smoke stage ${stage}: missing #${id} (frame=${frame.getAttribute('src')}, readyState=${doc.readyState})`);
+      return element;
+    };
     const check = (ok, message) => { if (timedOut) throw Error(`mobile smoke test exceeded timeout at stage ${stage}`); if (!ok) throw Error(message); };
     const tapCenter = async element => {
       // Real mobile users can scroll to a control before tapping it.
