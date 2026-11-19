@@ -75,7 +75,8 @@ with ThreadingHTTPServer(('127.0.0.1', 0), partial(SimpleHTTPRequestHandler, dir
         # item is unnecessary for the zero-fuel replay scenario.
         assert page.locator('[data-tab="flight"]').get_attribute('class').find('active') >= 0, 'Flight tab not initially selected'
         assert page.locator('#practice-btn').is_visible(), 'Flight controls unavailable'
-        assert page.locator('#energy').inner_text() == '0/5', 'Game did not restore zero-fuel checkpoint'\n        assert page.evaluate("() => JSON.parse(localStorage.getItem('luma_drift_save_v2')).energy") == 0
+        assert page.locator('#energy').inner_text() == '0/5', 'Game did not restore zero-fuel checkpoint'
+        assert page.evaluate("() => JSON.parse(localStorage.getItem('luma_drift_save_v2')).energy") == 0
         # Verify persisted economy state as well as HUD text: a UI-only check
         # could miss a hidden Practice payout or fuel debit.
         economy_before = page.evaluate("""() => {
