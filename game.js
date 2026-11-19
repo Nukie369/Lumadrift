@@ -329,7 +329,7 @@
   function renderFlightForecast(){
     const afterHit = run.hull === 1 ? 0 : Math.floor(run.cargo * .75);
     const storm = run.hull === 1
-      ? (run.practice ? 'Last hull point. A storm ends this free Practice flight; simulated cargo earns no rewards.' : `Last hull point. A storm ends this flight and loses ${nf.format(run.cargo)} unbanked shards. Bank now to protect your cargo.`)
+      ? (run.practice ? 'Last hull point. A storm ends this free Practice flight; simulated cargo earns no rewards.' : (run.cargo>0 ? `Last hull point. A storm ends this flight and loses ${nf.format(run.cargo)} unbanked shards. Bank now to protect your cargo.` : 'Last hull point. A storm ends this flight. No cargo is available to bank yet.'))
       : 'A storm costs 1 hull point.';
     const cargo = run.cargo ? (run.practice ? ` Simulated cargo after a hit: ${nf.format(afterHit)} ✦. Practice awards no shards.` : ` Cargo after a hit: ${nf.format(afterHit)} ✦.`) : '';
     const beacon = run.depth === 4 && !run.practice ? ' Survive this jump for the 120-shard beacon bonus.' : '';
