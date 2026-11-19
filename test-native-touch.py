@@ -90,7 +90,12 @@ with ThreadingHTTPServer(('127.0.0.1', 0), partial(SimpleHTTPRequestHandler, dir
             }""") == economy_before, 'Practice modified persisted economy'
             assert page.evaluate("() => JSON.parse(localStorage.getItem('luma_drift_save_v2')).dailyProgress") == mission_progress, 'Practice advanced missions'
             if i == 0:
-                assert page.locator('#again-btn').get_attribute('data-replay-mode') == 'practice', 'Zero fuel did not offer free replay'
+                replay_mode = page.locator('#again-btn').get_attribute('data-replay-mode')
+                saved = page.evaluate("""() => {
+                  const s = JSON.parse(localStorage.getItem('luma_drift_save_v2'));
+                  return {energy: s.energy, energyAt: s.energyAt, end: s.end, now: Date.now()};
+                }""")
+                assert replay_mode == 'practice', f'Zero-fuel replay mismatch: mode={replay_mode!r}, saved={saved!r}, button={page.locator("#again-btn").inner_text()!r}'
                 # One direct tap from the empty-tank results screen must start
                 # free Practice; no store offer or dismissal is required.
                 assert page.locator('#again-btn').is_visible(), 'Free replay hidden on results screen'
