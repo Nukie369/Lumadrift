@@ -422,7 +422,7 @@
     const today=dateKey(),already=state.dailyClaim===today,dist=state.dailyClaim?dayDistance(state.dailyClaim,today):999;
     const next=(already||dist===1)?(state.dailyStreak%7)+1:1;
     const gift=100+(next-1)*20+(next===7?180:0)+colonyBonus();
-    $('daily-status').textContent=`${nf.format(gift)} virtual shards per next claim · colony bonus +${colonyBonus()}.`;
+    $('daily-status').textContent=`${already?'Tomorrow':'Available today'}: ${nf.format(gift)} free virtual shards · colony bonus +${colonyBonus()}.`;
     $('daily-btn').disabled=already;
     $('daily-btn').textContent=already?'TODAY’S SUPPLY CLAIMED':`CLAIM +${nf.format(gift)} SHARDS`;
     $('daily-reward-description').textContent=`Claim ${nf.format(gift)} free virtual shards ${already?'tomorrow':'today'}. Claims reset at local midnight. Consecutive days increase rewards; missing a day restarts at Day 1. The 7-day cycle repeats. Colony buildings add a permanent bonus.`;
