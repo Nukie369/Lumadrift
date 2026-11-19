@@ -21,9 +21,15 @@ with ThreadingHTTPServer(('127.0.0.1', 0), partial(SimpleHTTPRequestHandler, dir
         page = context.new_page()
         page.goto(f'http://127.0.0.1:{server.server_port}/luma-drift-standalone-v8.2.html')
         page.wait_for_selector('#practice-btn')
-        page.evaluate("""() => {
-          // A 50% roll exceeds every first-crossing hazard (max 41%).\n          // Zero produces a storm, leaving cargo at zero and Bank disabled.\n          Object.defineProperty(crypto, 'getRandomValues', {configurable: true, value: a => {a.fill(0x80000000); return a;}});
-        }""")
+        # Install on every document, including the reload after editing saved fuel.
+        # A page.evaluate override disappears on navigation, causing flaky storms.
+        context.add_init_script("""() => {
+          // Fixed 50% roll keeps the first Practice crossing safe.
+          Object.defineProperty(crypto, 'getRandomValues', {
+            configurable: true,
+            value: a => { a.fill(0x80000000); return a; }
+          });
+        }""".replace('() => {', '{', 1))
         def touch(selector):
             el = page.locator(selector).first
             el.scroll_into_view_if_needed()
