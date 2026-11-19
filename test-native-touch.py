@@ -122,6 +122,27 @@ with ThreadingHTTPServer(('127.0.0.1', 0), partial(SimpleHTTPRequestHandler, dir
           return {credits: s.credits, energy: s.energy};
         }""") == economy_before, 'Reload changed persisted Practice economy'
         assert page.evaluate("() => JSON.parse(localStorage.getItem('luma_drift_save_v2')).dailyProgress") == mission_progress, 'Reload changed Practice missions'
+        # Simulate elapsed real time while results remain open: the regular
+        # 15-second refresh must expose the earned standard flight without
+        # charging fuel until the player explicitly taps it.
+        touch('#practice-btn')
+        page.wait_for_selector('#run-controls:visible')
+        touch('#routes button')
+        touch('#bank-btn')
+        assert page.locator('#again-btn').get_attribute('data-replay-mode') == 'practice'
+        page.evaluate("""() => {
+          const realNow = Date.now.bind(Date);
+          Date.now = () => realNow() + 1200001;
+          window.dispatchEvent(new Event('focus'));
+        }""")
+        assert page.locator('#energy').inner_text() == '1/5', 'Timed recharge did not restore one fuel'
+        assert page.locator('#again-btn').get_attribute('data-replay-mode') == 'standard', 'Results did not refresh replay mode after recharge'
+        assert '1 FUEL' in page.locator('#again-btn').inner_text(), 'Recharged replay cost not disclosed'
+        touch('#again-btn')
+        page.wait_for_selector('#run-controls:visible')
+        assert page.locator('#energy').inner_text() == '0/5', 'Standard replay did not consume exactly one fuel'
+        assert page.locator('#credits').inner_text() == credits, 'Starting recharged flight changed wallet'
+        print('PASS: results-screen recharge switches to disclosed one-fuel replay')
         print('PASS: two touchscreen Practice flights; wallet and fuel preserved after reload')
         context.close()
         browser.close()
