@@ -31,3 +31,30 @@ for(const scenario of [
  assert.equal(saves,1,scenario.name+' one save');
 }
 console.log('Four finish outcomes preserve economy and cannot award twice');
+// Star Atlas eligibility is per flight: early banking must explain the reset,
+// while two crossings award exactly one relic and never award it twice.
+for (const depth of [0, 1, 2]) {
+ const state={energy:0,credits:100,total:100,best:0,xp:0,wins:0,dailyProgress:{banked:0}};
+ let draws=0, saves=0;
+ const context={state,nf:new Intl.NumberFormat('en-US'),beep(){},
+  revealRelic(){draws++;return {id:'bloom',bonus:15,repeated:false,rarity:'COMMON'};},
+  addMissionStat(key,amount){state.dailyProgress[key]=(state.dailyProgress[key]||0)+amount;},
+  track(){},sceneMessage(){},updateScene(){},renderHeader(){},renderAtlas(){},
+  save(){saves++;},markFlight(){}};
+ vm.createContext(context);
+ vm.runInContext('let run=null;'+finishSource+';globalThis.complete=(flight)=>{run=flight;finish(false,false)};globalThis.repeat=()=>finish(false,false)',context);
+ context.complete({practice:false,cargo:40,depth,hull:2});
+ assert.equal(draws,depth>=2?1:0,'Atlas draw eligibility at depth '+depth);
+ assert.equal(state.credits,140+(depth>=2?15:0),'banked cargo and relic bonus at depth '+depth);
+ if(depth<2){
+  assert.match(state.end.description,/next flight/i,'early bank explains next flight');
+  assert.match(state.end.description,/two crossings/i,'early bank explains qualification');
+  assert.match(state.end.description,new RegExp(depth+' crossing'),'early bank shows actual crossings');
+ }else assert.equal(state.end.relic.id,'bloom','qualifying bank reveals relic');
+ const snapshot=JSON.stringify(state);
+ context.repeat();
+ assert.equal(JSON.stringify(state),snapshot,'no duplicate payout at depth '+depth);
+ assert.equal(draws,depth>=2?1:0,'no duplicate relic draw at depth '+depth);
+ assert.equal(saves,1,'exactly one save at depth '+depth);
+}
+console.log('Atlas banking at 0, 1 and 2 crossings preserves eligibility and one-time rewards');
