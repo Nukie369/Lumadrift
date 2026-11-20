@@ -109,6 +109,8 @@ with ThreadingHTTPServer(('127.0.0.1', 0), partial(SimpleHTTPRequestHandler, dir
                 page.set_viewport_size({'width': 390, 'height': 844})
             touch('#routes button')
             touch('#bank-btn')
+            assert 'NO REWARDS' in page.locator('#end-desc').inner_text().upper(), 'Practice results did not disclose no rewards'
+            assert 'NO REWARDS' in page.locator('#end-controls').inner_text().upper(), 'Practice exit omitted no-rewards disclosure'
             assert page.locator('#end-earned').inner_text() == '0', 'Practice awarded currency'
             assert page.locator('#credits').inner_text() == credits, 'Practice changed wallet'
             assert page.locator('#energy').inner_text() == fuel, 'Practice consumed fuel'
