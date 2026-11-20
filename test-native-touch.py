@@ -95,6 +95,18 @@ with ThreadingHTTPServer(('127.0.0.1', 0), partial(SimpleHTTPRequestHandler, dir
         touch('#practice-btn')
         for i in range(2):
             page.wait_for_selector('#run-controls:visible')
+            if i == 0:
+                # The expanded storm warnings must remain readable on a narrow phone.
+                page.set_viewport_size({'width': 320, 'height': 720})
+                route_layout = page.locator('#routes button').evaluate_all("""buttons => buttons.map(b => {
+                  const text = b.querySelector('.route-side') || b;
+                  const rect = text.getBoundingClientRect();
+                  return {label: b.innerText, right: rect.right, viewport: innerWidth,
+                    overflow: text.scrollWidth > text.clientWidth + 2};
+                })""")
+                assert route_layout and all('storm' in r['label'].lower() for r in route_layout), f'Missing visible storm warnings: {route_layout}'
+                assert all(not r['overflow'] and r['right'] <= r['viewport'] + 2 for r in route_layout), f'Clipped narrow-screen route warnings: {route_layout}'
+                page.set_viewport_size({'width': 390, 'height': 844})
             touch('#routes button')
             touch('#bank-btn')
             assert page.locator('#end-earned').inner_text() == '0', 'Practice awarded currency'
