@@ -98,6 +98,9 @@ with ThreadingHTTPServer(('127.0.0.1', 0), partial(SimpleHTTPRequestHandler, dir
             if i == 0:
                 # The expanded storm warnings must remain readable on a narrow phone.
                 page.set_viewport_size({'width': 320, 'height': 720})
+                assert page.evaluate('document.documentElement.scrollWidth <= document.documentElement.clientWidth + 2'), '320px mobile page scrolls horizontally before route selection'
+                assert page.locator('#routes button').count() > 0, 'No routes rendered at 320px'
+                assert all(page.locator('#routes button').nth(j).bounding_box()['width'] >= 44 and page.locator('#routes button').nth(j).bounding_box()['height'] >= 44 for j in range(page.locator('#routes button').count())), '320px route touch target smaller than 44 CSS pixels'
                 route_layout = page.locator('#routes button').evaluate_all("""buttons => buttons.map(b => {
                   const text = b.querySelector('.route-side') || b;
                   const rect = text.getBoundingClientRect();
