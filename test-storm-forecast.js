@@ -12,6 +12,6 @@ const final = describe({depth: 4, hull: 2, cargo: 101, practice: false});
 assert.match(final, /after a hit: 75 ✦/);
 assert.match(final, /120-shard beacon bonus/);
 const fatal = describe({depth: 4, hull: 1, cargo: 101, practice: true});
-assert.match(fatal, /storm ends this flight/);
+assert.match(fatal, /storm ends this (?:free Practice )?flight/);
 assert.match(fatal, /after a hit: 0 ✦/);
 assert.doesNotMatch(fatal, /bonus/);
