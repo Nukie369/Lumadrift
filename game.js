@@ -333,8 +333,9 @@
       : 'A storm costs 1 hull point.';
     const cargo = run.cargo ? (run.practice ? ` Simulated cargo after a hit: ${nf.format(afterHit)} ✦. Practice awards no shards.` : ` Cargo after a hit: ${nf.format(afterHit)} ✦.`) : '';
     const beacon = run.depth === 4 && !run.practice ? ' Survive this jump for the 120-shard beacon bonus.' : '';
+    const saferRoute = run.hull === 1 && run.cargo > 0 && !run.practice ? ` If you continue, Comet Trail is the lowest-risk lane at ${riskFor(lanes[0],run.depth)}% storm risk; banking avoids that risk.` : '';
     const relic = run.practice ? '' : run.depth >= 2 ? (run.cargo > 0 ? ' Bank now to secure one free Star Atlas relic draw. Pushing deeper risks losing the draw if the hull breaks.' : ' Survive another crossing to collect cargo before banking your Star Atlas relic draw; no cargo can be banked yet.') : ` ${2-run.depth} more safe or storm-survived jump${2-run.depth===1?'':'s'} before banking qualifies for a Star Atlas relic draw.`;
-    $('flight-forecast').textContent = storm + cargo + beacon + relic;
+    $('flight-forecast').textContent = storm + cargo + beacon + relic + saferRoute;
   }
   const lanes=[{id:'calm',name:'Comet Trail',icon:'☄️',base:11,range:[32,58],theme:'LOW RISK'},
     {id:'surge',name:'Ion Rapids',icon:'⚡',base:25,range:[70,106],theme:'BALANCED'},
