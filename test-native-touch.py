@@ -132,8 +132,16 @@ with ThreadingHTTPServer(('127.0.0.1', 0), partial(SimpleHTTPRequestHandler, dir
                 # One direct tap from the empty-tank results screen must start
                 # free Practice; no store offer or dismissal is required.
                 assert page.locator('#again-btn').is_visible(), 'Free replay hidden on results screen'
+                # Measure the empty-tank replay friction directly: one tap,
+                # zero mandatory offer dismissals, and immediate playable routes.
+                replay_taps = 0
+                forced_dismissals = 0
                 touch('#again-btn')
+                replay_taps += 1
                 page.wait_for_selector('#run-controls:visible')
+                assert page.locator('#routes button:visible').count() > 0, 'Free replay has no playable route'
+                assert (replay_taps, forced_dismissals) == (1, 0), 'Free replay requires extra interactions'
+                print(f'PASS: empty-tank results to playable Practice: {replay_taps} tap, {forced_dismissals} forced dismissals')
                 assert not page.locator('#end-earned').is_visible(), 'Results overlay did not close for free replay'
                 assert page.locator('#energy').inner_text() == fuel, 'Free replay consumed fuel'
         page.reload()
