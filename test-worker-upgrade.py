@@ -78,36 +78,25 @@ def run(browser, temp):
               return reg?.active?.state === 'activated' && !reg.waiting &&
                      !reg.installing && keys.length === 1 && keys[0] === targetCache;
             }""", arg=target_cache)
-            # Wait for the new worker to control a fresh navigation. An active
-            # registration alone does not guarantee that the first tab uses it.
-            page = context.new_page()
+            # A navigation may itself discover a pending worker update. Close
+            # each unsuccessful tab so it cannot pin the previous controller.
+            # This tests the real returning-player path, not a forced skipWaiting.
             observed = None
-            for attempt in range(4):
-                if attempt:
-                    page.reload()
-                else:
-                    page.goto(origin + '/game/')
+            for attempt in range(6):
+                page = context.new_page()
+                page.goto(origin + '/game/')
                 observed = page.locator('body').get_attribute('data-release')
                 if observed == target:
                     break
-                page.wait_for_timeout(250)
-            if observed != target:
-                print(f'Upgrade {current}->{target} did not reach target after four navigations; collecting worker/cache state', flush=True)
-                diagnostics = page.evaluate("""async () => {
+                page.close()
+                observer.wait_for_function("""async targetCache => {
                   const reg = await navigator.serviceWorker.getRegistration('/game/');
-                  const keys = await caches.keys();
-                  const entries = {};
-                  for (const key of keys) {
-                    const cache = await caches.open(key);
-                    const response = await cache.match('/game/game.js');
-                    entries[key] = response ? (await response.text()).match(/dataset.release = '[^']+'/)?.[0] : null;
-                  }
-                  return {controller: navigator.serviceWorker.controller?.scriptURL,
-                          active: reg?.active?.scriptURL, activeState: reg?.active?.state,
-                          waiting: reg?.waiting?.scriptURL, installing: reg?.installing?.scriptURL,
-                          caches: entries};
-                }""")
-                raise AssertionError(f'Expected release {target}; got {observed} after 4 navigations; worker diagnostics: {diagnostics}')
+                  const keys = (await caches.keys()).filter(k => k.startsWith('luma-drift-'));
+                  return reg?.active?.state === 'activated' && !reg.waiting &&
+                         !reg.installing && keys.length === 1 && keys[0] === targetCache;
+                }""", arg=target_cache)
+            if observed != target:
+                raise AssertionError(f'Expected release {target}; got {observed} after 6 fresh navigations')
             assert page.locator('#credits').inner_text() == credits, 'Saved reward lost on upgrade'
             return page
 
