@@ -23,6 +23,13 @@ for (const set of ['skyward', 'deep', 'both']) {
 }
 console.log('Atlas pacing simulation verified:', JSON.stringify(a));
 NODE
+# Keep economy and progression models executable in CI, not just in ad hoc runs.
+# These deterministic checks do not change live reward odds or game economy.
+for model in atlas-simulation.js atlas-flight-scenarios.js atlas-route-qualification.js atlas-route-cargo.js colony-first-landmark-simulation.js; do
+  echo "Checking progression model: $model"
+  node --check "$model"
+  node "$model" > /dev/null
+done
 count=0
 failures=0
 for test in test-*.js; do
