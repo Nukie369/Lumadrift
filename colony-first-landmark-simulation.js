@@ -48,7 +48,17 @@ function run(){
  assert(without[0].medianLaunches>=without[2].medianLaunches,'higher cargo route should be faster in this model');
  assert(persistentStorms.every(r=>r.p90Launches>=1));
  assert(persistentStorms[2].zeroCargoFlightPercent>without[2].zeroCargoFlightPercent,'storm persistence should raise Blackstar zero-cargo incidence');
- return {persistentStormSensitivity:persistentStorms,assumptions:'Fresh 3-hull ship, bank after two crossings, 150 starting shards, first landmark costs 260, optional first-day 100-shard supply. No missions, relics, upgrades, energy recharge or time estimates. Baseline uses independent storms as modeled in game.js. Sensitivity adds hypothetical +15 percentage points after a storm; NOT a live game mechanic. Simulated, not player telemetry.',withoutDaily:without,withDayOneSupply:withDaily};
+ // Exact baseline chance of two storms (zero cargo) from the same risk formula.
+ // This catches accidental drift between the simulation and the game mechanics.
+ const exactZeroCargoPercent=routes.map(route=>+(route.base*(route.base+3)/100).toFixed(2));
+ const baselineFlightSamples=routes.map((route,i)=>{
+  const random=rng(0x5eed+i);let zero=0;const n=100000;
+  for(let j=0;j<n;j++)if(flight(route,random).cargo===0)zero++;
+  const observed=100*zero/n;
+  assert(Math.abs(observed-exactZeroCargoPercent[i])<0.5,route.name+' zero-cargo probability drift');
+  return {route:route.name,exactZeroCargoPercent:exactZeroCargoPercent[i],simulatedZeroCargoPercent:+observed.toFixed(2)};
+ });
+ return {baselineFlightSamples,persistentStormSensitivity:persistentStorms,assumptions:'Fresh 3-hull ship, bank after two crossings, 150 starting shards, first landmark costs 260, optional first-day 100-shard supply. No missions, relics, upgrades, energy recharge or time estimates. Baseline uses independent storms as modeled in game.js. Sensitivity adds hypothetical +15 percentage points after a storm; NOT a live game mechanic. Simulated, not player telemetry.',withoutDaily:without,withDayOneSupply:withDaily};
 }
 if(require.main===module)console.log(JSON.stringify(run(),null,2));
 module.exports={flight,simulate,run};
