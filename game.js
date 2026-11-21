@@ -307,9 +307,8 @@
   let audio;
   function beep(freq=520,duration=.12,type='sine'){if(!state.sound)return;try{audio=audio||new (globalThis.AudioContext||globalThis.webkitAudioContext)();const osc=audio.createOscillator(),gain=audio.createGain();osc.type=type;osc.frequency.setValueAtTime(freq,audio.currentTime);gain.gain.setValueAtTime(.09,audio.currentTime);gain.gain.exponentialRampToValueAtTime(.001,audio.currentTime+duration);osc.connect(gain);gain.connect(audio.destination);osc.start();osc.stop(audio.currentTime+duration+.01);}catch{}}
   function renderReplayChoice(){const replay=$('again-btn');if(!replay)return;replay.setAttribute('aria-live','polite');const fueled=state.energy>0;replay.dataset.replayMode=fueled?'standard':'practice';const minutes=Math.max(1,Math.min(20,Math.ceil((1200000-(Date.now()-state.energyAt))/60000)));const label=fueled?'FLY AGAIN • 1 FUEL ➜':`PRACTICE FREE • NO REWARDS ➜ (FUEL IN ${minutes}M)`;const spoken=fueled?'Fly again, uses one fuel and awards expedition rewards':`Practice for free with zero fuel required; no rewards or mission progress. Next fuel in approximately ${minutes} ${minutes===1?'minute':'minutes'}`;if(replay.textContent!==label)replay.textContent=label;if(replay.getAttribute('aria-label')!==spoken)replay.setAttribute('aria-label',spoken);}
-  function renderHeader(){regen();ensureDay();$('credits').textContent=nf.format(state.credits);
-    // Surface the next free-player colony goal on Explore without requiring a tab switch.
-    const teaser=document.querySelector('.world-teaser span');
+  function renderHeader(){regen();ensureDay();$('credits').textContent=nf.format(state.credits);if(document.getElementById('colony-next-milestone'))renderColonyFunding();    // Surface the next free-player colony goal on Explore without requiring a tab switch.
+    const teaser=typeof document.querySelector==='function'?document.querySelector('.world-teaser span'):null;
     if(teaser){
       const next=buildingDefs.find(def=>!state.buildings.includes(def.id));
       if(!next)teaser.textContent='Nova Haven is complete! Visit your colony to see every landmark.';
@@ -319,7 +318,7 @@
           ? `${next.name} is ready to build! Visit your colony.`
           : `Next: ${next.name} · ${nf.format(remaining)} more shards to build. Shards are not reserved.`;
       }
-    }if(document.getElementById('colony-next-milestone'))renderColonyFunding();$('energy').textContent=`${state.energy}/5`;if(state.end&&!run&&typeof renderReplayChoice==='function')renderReplayChoice();$('level').textContent=level();$('runs').textContent=nf.format(state.runs);$('best-haul').textContent=`${nf.format(state.best)} ✦`;$('total-salvage').textContent=nf.format(state.total);$('streak').textContent=nf.format(state.wins);$('upgrades').textContent=Object.values(state.upgrades).reduce((a,b)=>a+b,0);$('sound-btn').setAttribute('aria-pressed',String(state.sound));$('sound-btn').title=state.sound?'Mute':'Enable sound';}
+    }$('energy').textContent=`${state.energy}/5`;if(state.end&&!run&&typeof renderReplayChoice==='function')renderReplayChoice();$('level').textContent=level();$('runs').textContent=nf.format(state.runs);$('best-haul').textContent=`${nf.format(state.best)} ✦`;$('total-salvage').textContent=nf.format(state.total);$('streak').textContent=nf.format(state.wins);$('upgrades').textContent=Object.values(state.upgrades).reduce((a,b)=>a+b,0);$('sound-btn').setAttribute('aria-pressed',String(state.sound));$('sound-btn').title=state.sound?'Mute':'Enable sound';}
   function activateTab(name){track('tab',{name});for(const button of document.querySelectorAll('.nav-item')){button.classList.toggle('active',button.dataset.tab===name);button.setAttribute('aria-current',button.dataset.tab===name?'page':'false');}for(const view of document.querySelectorAll('.view'))view.classList.toggle('active',view.id===name);if(name==='colony'){renderColony();renderAtlas();}if(name==='missions')renderMissions();if(name==='hangar')renderShop();if(name==='earn')renderRewards();window.scrollTo({top:0,behavior:'smooth'});}
   function burst(emoji='✦'){
     const target=$('scene');
