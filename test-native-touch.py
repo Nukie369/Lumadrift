@@ -178,6 +178,25 @@ with ThreadingHTTPServer(('127.0.0.1', 0), partial(SimpleHTTPRequestHandler, dir
         page.wait_for_selector('#run-controls:visible')
         assert page.locator('#energy').inner_text() == '0/5', 'Standard replay did not consume exactly one fuel'
         assert page.locator('#credits').inner_text() == credits, 'Starting recharged flight changed wallet'
+        # A real flight must bank its cargo once, even if the player reloads
+        # while viewing the results screen. Practice's zero-reward path above
+        # is intentionally separate from this standard-flight accounting.
+        touch('#routes button')
+        touch('#bank-btn')
+        credited = page.evaluate("""() => {
+          const s = JSON.parse(localStorage.getItem('luma_drift_save_v2'));
+          return {credits: s.credits, energy: s.energy, banked: s.dailyProgress.banked};
+        }""")
+        assert credited['credits'] > economy_before['credits'], 'Standard flight did not bank earned cargo'
+        assert credited['energy'] == 0, 'Banking standard cargo changed fuel'
+        page.reload()
+        page.wait_for_selector('#practice-btn')
+        restored = page.evaluate("""() => {
+          const s = JSON.parse(localStorage.getItem('luma_drift_save_v2'));
+          return {credits: s.credits, energy: s.energy, banked: s.dailyProgress.banked};
+        }""")
+        assert restored == credited, 'Reload duplicated or lost previously banked standard cargo'
+        print('PASS: standard-flight cargo banked exactly once across results-screen reload')
         print('PASS: results-screen recharge switches to disclosed one-fuel replay')
         print('PASS: two touchscreen Practice flights; wallet and fuel preserved after reload')
         context.close()
