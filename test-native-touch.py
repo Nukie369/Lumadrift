@@ -57,6 +57,20 @@ with ThreadingHTTPServer(('127.0.0.1', 0), partial(SimpleHTTPRequestHandler, dir
                 page.screenshot(path='native-touch-obstruction.png', full_page=True)
                 raise AssertionError(f'Touch target obscured: {selector}; center hit={detail}; box={box}; screenshot=native-touch-obstruction.png')
             page.touchscreen.tap(*point)
+        # Returning free players must be able to read and open their next
+        # colony goal on a narrow Android-sized viewport without clipped text.
+        page.set_viewport_size({'width': 320, 'height': 720})
+        teaser = page.locator('.world-teaser span')
+        goal = page.locator('#goto-colony')
+        assert teaser.is_visible() and 'shards' in teaser.inner_text().lower(), 'Explore colony goal missing its shard progress'
+        assert goal.is_visible() and goal.get_attribute('aria-label'), 'Colony goal action lacks an accessible label'
+        assert page.evaluate('document.documentElement.scrollWidth <= document.documentElement.clientWidth + 2'), '320px Explore colony goal causes horizontal page scrolling'
+        assert teaser.evaluate('(e) => e.scrollWidth <= e.clientWidth + 2'), '320px colony goal text is clipped'
+        touch('#goto-colony')
+        assert page.locator('[data-tab="colony"]').get_attribute('class').find('active') >= 0, 'Colony goal did not open the colony'
+        touch('[data-tab="flight"]')
+        page.set_viewport_size({'width': 390, 'height': 844})
+        print('PASS: 320px Explore colony goal is readable and opens colony by touch')
         # Start from a genuinely empty tank, not a free Practice flight
         # while standard replay is still available.
         page.evaluate("""() => {
