@@ -315,7 +315,7 @@
       else{
         const remaining=Math.max(0,next.cost-state.credits);
         teaser.textContent=remaining===0
-          ? `${next.name} is ready to build! Visit your colony.`
+          ? `${next.name} is ready to build! ${nf.format(state.credits)}/${nf.format(next.cost)} shards available. Visit your colony to build when ready.`
           : `Next: ${next.name} · ${nf.format(Math.min(state.credits,next.cost))}/${nf.format(next.cost)} shards available · ${nf.format(remaining)} more needed. Shards are not reserved.`;
       }
     }const colonyButton=typeof document.getElementById==='function'?document.getElementById('goto-colony'):null;
