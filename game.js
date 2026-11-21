@@ -316,7 +316,7 @@
         const remaining=Math.max(0,next.cost-state.credits);
         teaser.textContent=remaining===0
           ? `${next.name} is ready to build! ${nf.format(state.credits)}/${nf.format(next.cost)} shards available. Visit your colony to build when ready.`
-          : `Next: ${next.name} · ${nf.format(Math.min(state.credits,next.cost))}/${nf.format(next.cost)} shards available · ${nf.format(remaining)} more needed. Shards are not reserved.`;
+          : `Next: ${next.name} · ${nf.format(state.credits)}/${nf.format(next.cost)} shards available · ${nf.format(remaining)} more needed. Shards are not reserved.`;
       }
     }const colonyButton=typeof document.getElementById==='function'?document.getElementById('goto-colony'):null;
     if(colonyButton){const next=buildingDefs.find(def=>!state.buildings.includes(def.id));const ready=next&&state.credits>=next.cost;colonyButton.textContent=ready?'OPEN COLONY • LANDMARK READY →':next?'VIEW COLONY GOAL →':'VIEW COMPLETED COLONY →';colonyButton.setAttribute('aria-label',ready?`${next.name} is affordable. Open colony to review and build it when ready.`:next?`Open colony to view ${next.name} and its shard cost`:'Open completed colony');}
