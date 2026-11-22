@@ -168,8 +168,8 @@ with ThreadingHTTPServer(('127.0.0.1', 0), partial(SimpleHTTPRequestHandler, dir
         }""") == economy_before, 'Reload changed persisted Practice economy'
         assert page.evaluate("() => JSON.parse(localStorage.getItem('luma_drift_save_v2')).dailyProgress") == mission_progress, 'Reload changed Practice missions'
         # Simulate elapsed real time while results remain open: the regular
-        # 15-second refresh must expose the earned standard flight without
-        # charging fuel until the player explicitly taps it.
+        # refresh must preserve the existing Practice choice without
+        # charging fuel until the player explicitly selects a new flight.
         touch('#practice-btn')
         page.wait_for_selector('#run-controls:visible')
         touch('#routes button')
@@ -186,8 +186,15 @@ with ThreadingHTTPServer(('127.0.0.1', 0), partial(SimpleHTTPRequestHandler, dir
         assert page.locator('#credits').inner_text() == credits, 'Recharge changed wallet before replay'
         assert page.evaluate("() => JSON.parse(localStorage.getItem('luma_drift_save_v2')).energy") == 1, 'Recharge did not persist one fuel'
         assert page.evaluate("() => JSON.parse(localStorage.getItem('luma_drift_save_v2')).dailyProgress") == mission_progress, 'Recharge advanced missions before replay'
-        assert page.locator('#again-btn').get_attribute('data-replay-mode') == 'standard', 'Results did not refresh replay mode after recharge'
-        assert '1 FUEL' in page.locator('#again-btn').inner_text(), 'Recharged replay cost not disclosed'
+        assert page.locator('#again-btn').get_attribute('data-replay-mode') == 'practice', 'Recharge silently changed Practice selection'
+        assert 'FUEL IN' not in page.locator('#again-btn').inner_text(), 'Recharged Practice retained stale countdown'
+        touch('#again-btn')
+        page.wait_for_selector('#run-controls:visible')
+        assert page.locator('#energy').inner_text() == '1/5', 'Recharged Practice consumed fuel'
+        touch('#routes button')
+        touch('#bank-btn')
+        assert page.locator('#credits').inner_text() == credits, 'Recharged Practice awarded wallet credits'
+        assert page.locator('#again-btn').get_attribute('data-replay-mode') == 'standard', 'New results did not offer standard replay'
         touch('#again-btn')
         page.wait_for_selector('#run-controls:visible')
         assert page.locator('#energy').inner_text() == '0/5', 'Standard replay did not consume exactly one fuel'
