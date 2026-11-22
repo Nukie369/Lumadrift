@@ -14,9 +14,10 @@ const button = {
   setAttribute(name, value) { attributes[name] = value; },
   getAttribute(name) { return attributes[name] ?? null; }
 };
-const state = {energy: 0, energyAt: 0};
+const state = {energy: 0, energyAt: 0, end: {id: 1}};
+let replayChoiceEnd = null;
 const now = 100000000;
-const context = {state, $: () => button, Date: {now: () => now}, Math};
+const context = {state, $: () => button, Date: {now: () => now}, Math, replayChoiceEnd};
 vm.runInNewContext(fn + '; renderReplayChoice();', context);
 assert.equal(button.dataset.replayMode, 'practice');
 assert.match(button.textContent, /PRACTICE FREE.*NO REWARDS/);
@@ -24,6 +25,10 @@ assert.match(attributes['aria-label'], /no rewards or mission progress/i);
 assert.match(attributes['aria-label'], /Next fuel/i);
 assert.equal(attributes['aria-live'], 'polite');
 state.energy = 1;
+vm.runInNewContext('renderReplayChoice()', context);
+assert.equal(button.dataset.replayMode, 'practice', 'recharge must preserve Practice on same result');
+assert.doesNotMatch(button.textContent, /FUEL IN/);
+state.end = {id: 2};
 vm.runInNewContext('renderReplayChoice()', context);
 assert.equal(button.dataset.replayMode, 'standard');
 assert.match(button.textContent, /FLY AGAIN.*1 FUEL/);
