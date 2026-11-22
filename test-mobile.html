@@ -84,7 +84,7 @@ frame.onload = async () => {
       check(!get('end-controls').hidden && get('end-controls').getBoundingClientRect().width > 0, `practice results panel not visible before recharge: endHidden=${get('end-controls').hidden}, runHidden=${get('run-controls').hidden}, activeTab=${doc.querySelector('.nav-item.active')?.dataset.tab || 'none'}, bankDisabled=${get('bank-btn').disabled}, cargo=${get('cargo').textContent}`);
       check(get('again-btn').getBoundingClientRect().width >= 44, 'practice results replay button not visible before recharge');
       // Simulate a 20-minute recharge while the results screen stays open.
-      // The next replay must be a normal reward-earning flight, not free Practice.
+      // The existing results screen must preserve its explicit free Practice choice.
       const clock = frame.contentWindow.Date;
       const originalNow = clock.now;
       const creditsBeforeRecharge = Number(get('credits').textContent.replace(/,/g, ''));
@@ -97,15 +97,22 @@ frame.onload = async () => {
         // Repeated resume/focus notifications must not grant fuel twice.
         frame.contentWindow.dispatchEvent(new frame.contentWindow.Event('focus'));
         check(get('energy').textContent === '1/5', 'repeated focus granted duplicate fuel');
-        check(get('again-btn').dataset.replayMode === 'standard' && get('again-btn').textContent.includes('1 FUEL'), 'recharged results did not display standard replay');
+        check(get('again-btn').dataset.replayMode === 'practice' && !get('again-btn').textContent.includes('FUEL IN'), 'recharged results did not preserve Practice without stale countdown');
         doc.querySelector('[data-tab="flight"]').click();
         check(get('end-controls').getBoundingClientRect().width > 0, 'recharged results panel hidden behind another tab');
         check(!get('again-btn').disabled && !get('again-btn').hidden, 'recharged replay button unavailable');
         await tapCenter(get('again-btn'));
         get('again-btn').click();
         check(!get('run-controls').hidden, 'recharged results replay did not launch');
-        check(get('energy').textContent === '0/5', 'recharged flight did not spend its one recovered fuel');
-        check(!get('routes').firstElementChild.textContent.includes('simulation only'), 'recharged replay incorrectly launched free practice');
+        check(get('energy').textContent === '1/5', 'recharged Practice consumed recovered fuel');
+        check(get('routes').firstElementChild.textContent.includes('simulation only'), 'recharged Practice unexpectedly launched standard flight');
+        get('routes').firstElementChild.click();
+        get('bank-btn').click();
+        check(Number(get('credits').textContent.replace(/,/g, '')) === creditsBeforeRecharge, 'recharged Practice changed wallet');
+        check(get('again-btn').dataset.replayMode === 'standard', 'new results screen did not select standard replay with fuel');
+        get('again-btn').click();
+        check(get('energy').textContent === '0/5', 'standard replay did not spend recovered fuel');
+        check(!get('routes').firstElementChild.textContent.includes('simulation only'), 'new results standard replay launched Practice');
         Object.defineProperty(frame.contentWindow.crypto, 'getRandomValues', {configurable:true,value:a=>{a.fill(0xffffffff);return a;}});
         get('routes').firstElementChild.click();
         get('bank-btn').click();
